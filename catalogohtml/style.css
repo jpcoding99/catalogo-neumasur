@@ -1,0 +1,215 @@
+/* 1. Variables Globales (Para cambiar colores rápido) */
+/* Variables por defecto (Modo Oscuro) */
+:root {
+    --bg-color: #0d1117;
+    --card-bg: #161b22;
+    --accent-color: #e74c3c;
+    --text-main: #f0f6fc;
+    --text-dim: #8b949e;
+    --border-color: #30363d;
+    --wsp-green: #25d366;
+}
+
+/* Variables para el Modo Claro */
+body.light-mode {
+    --bg-color: #ffffff;
+    --card-bg: #f6f8fa;
+    --text-main: #1f2328;
+    --text-dim: #57606a;
+    --border-color: #d0d7de;
+}
+
+/* 2. Reset y Estilos Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+/* 3. Header y Filtros (Sticky) */
+header {
+    background-color: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #30363d;
+    text-align: center;
+
+    position: relative;
+}
+
+.logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.filtros-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.filter-group label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+select {
+    background-color: #21262d;
+    color: white;
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: var(--accent-color);
+}
+
+/* 4. Grid de Productos */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* 5. Tarjetas (Cards) */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-color);
+}
+
+.card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background-color: #000;
+}
+
+.card-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.tag {
+    background-color: var(--accent-color);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.card h3 {
+    margin: 10px 0 5px;
+    font-size: 1.2rem;
+}
+
+.specs {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+
+.price {
+    display: block;
+    margin: 15px 0;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #2ecc71;
+}
+
+/* Botón WhatsApp dentro de la Card */
+.btn-wsp-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--wsp-green);
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: filter 0.2s;
+}
+
+.btn-wsp-item:hover {
+    filter: brightness(1.1);
+}
+
+/* 6. Botón Flotante Global */
+.wsp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--wsp-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    z-index: 2000;
+}
+
+.wsp-float img {
+    width: 35px;
+}
+
+/* 7. Footer */
+footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid #30363d;
+}
+
+/* 8. Responsive */
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+    
+    .card h3 { font-size: 1rem; }
+    .price { font-size: 1.1rem; }
+}

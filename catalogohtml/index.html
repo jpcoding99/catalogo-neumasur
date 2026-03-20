@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Pro | Llantas & Ruedas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="header-top">
+            <img src="img/1.png" alt="Logo de Neumasur" class="logo">
+            
+            <button id="theme-toggle" class="theme-btn">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+
+        <nav class="filtros-container">
+            <div class="filter-group">
+                <label for="f-marca">Marca</label>
+                <select id="f-marca">
+                    <option value="todos">Todas</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="f-aro">Medida</label>
+                <select id="f-aro">
+                    <option value="todos">Todos los Aros</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="f-aper">Apernadura</label>
+                <select id="f-aper">
+                    <option value="todos">Todas</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="catalogo-grid" class="product-grid">
+            <p class="loading">Cargando stock de Neumasur...</p>
+        </div>
+    </main>
+
+    <a href="https://wa.me/56995127303" class="wsp-float" target="_blank" title="Contáctanos">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    </a>
+
+    <footer>
+        <p>&copy; 2026 NEUMASUR - San Rafael, Chile</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
