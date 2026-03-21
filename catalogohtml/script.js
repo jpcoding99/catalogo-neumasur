@@ -14,6 +14,8 @@ function initTheme() {
     if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
         themeIcon.textContent = '☀️';
+    } else {
+        themeIcon.textContent = '🌙';
     }
 
     themeToggle.addEventListener('click', () => {
@@ -82,4 +84,38 @@ function renderizarLlantas(lista) {
             <div class="card-info">
                 <span class="tag">Aro ${llanta.aro}</span>
                 <h3>${llanta.marca} ${llanta.modelo}</h3>
-                <p
+                <p class="specs">${llanta.apernadura}</p>
+                <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
+                <a href="${urlWsp}" target="_blank" class="btn-wsp-item">
+                    Consultar Stock
+                </a>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// 6. Filtrar Stock
+function filtrarStock() {
+    const m = selectMarca.value;
+    const a = selectAro.value;
+    const ap = selectAper.value;
+
+    const filtrados = llantas.filter(l => {
+        const matchMarca = m === 'todos' || l.marca === m;
+        const matchAro = a === 'todos' || l.aro.toString() === a;
+        const matchAper = ap === 'todos' || l.apernadura === ap;
+        return matchMarca && matchAro && matchAper;
+    });
+
+    renderizarLlantas(filtrados);
+}
+
+// 7. Event Listeners para los filtros
+selectMarca.addEventListener('change', filtrarStock);
+selectAro.addEventListener('change', filtrarStock);
+selectAper.addEventListener('change', filtrarStock);
+
+// Iniciar aplicación
+initTheme();
+cargarDatos();
