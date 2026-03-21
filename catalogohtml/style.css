@@ -36,13 +36,13 @@ body {
 
 /* 3. Header y Filtros (Sticky) */
 header {
-    background-color: rgba(13, 17, 23, 0.95);
+    background-color: var(--card-bg);
     backdrop-filter: blur(10px);
     padding: 20px;
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid #30363d;
+    border-bottom: 1px solid var(--border-color);
     text-align: center;
 
     position: relative;
@@ -86,6 +86,12 @@ select {
     cursor: pointer;
 }
 
+body.light-mode select {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
 select:focus {
     border-color: var(--accent-color);
 }
@@ -106,7 +112,7 @@ select:focus {
 /* 5. Tarjetas (Cards) */
 .card {
     background-color: var(--card-bg);
-    border: 1px solid #30363d;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.3s ease, border-color 0.3s ease;
@@ -200,7 +206,7 @@ footer {
     padding: 40px;
     color: var(--text-dim);
     font-size: 0.8rem;
-    border-top: 1px solid #30363d;
+    border-top: 1px solid var(--border-color);
 }
 
 /* 8. Responsive */
