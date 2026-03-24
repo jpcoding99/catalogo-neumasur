@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Llantas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Top Banner Anuncio -->
+    <div class="announcement-banner">
+        <span class="announcement-text">🚚 Consultar Stock • Reparto gratuito desde Rancagua hasta Puerto Montt 🚚 &nbsp; 🚚 Consultar Stock • Reparto gratuito desde Rancagua hasta Puerto Montt 🚚</span>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <button id="menu-toggle" class="menu-btn" title="Menú" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo-section">
+                <img src="img/LOGO.png" alt="Logo de Neumasur" class="logo">
+            </div>
+            
+            <!-- Navegación de Filtros Desktop -->
+            <nav class="main-nav">
+                <div class="filter-group">
+                    <select id="f-marca-desktop">
+                        <option value="todos">Todas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="f-aro-desktop">
+                        <option value="todos">Todos los Aros</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="f-aper-desktop">
+                        <option value="todos">Todas</option>
+                    </select>
+                </div>
+            </nav>
+
+            <button id="theme-toggle" class="theme-btn" title="Cambiar tema">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+
+        <!-- Drawer Menu Móvil -->
+        <div id="drawer-menu" class="drawer-menu">
+            <button id="drawer-close" class="drawer-close" title="Cerrar menú" aria-label="Cerrar menú">✕</button>
+            <nav class="drawer-nav">
+                <div class="filter-group">
+                    <label for="f-marca">Marca</label>
+                    <select id="f-marca">
+                        <option value="todos">Todas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="f-aro">Medida</label>
+                    <select id="f-aro">
+                        <option value="todos">Todos los Aros</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="f-aper">Apernadura</label>
+                    <select id="f-aper">
+                        <option value="todos">Todas</option>
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-image">
+        <img src="img/carousel/slide1.JPG" alt="Neumasur - Catálogo de Llantas">
+        <div class="hero-overlay">
+            <h1>Bienvenido a Neumasur®</h1>
+            <p>Encuentra las mejores llantas para tu vehículo</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>CATÁLOGO DE LLANTAS</h1>
+            <p>Encuentra la llanta perfecta para tu vehículo</p>
+        </div>
+        
+        <div id="catalogo-grid" class="product-grid">
+            <p class="loading">Cargando stock de Neumasur...</p>
+        </div>
+    </main>
+
+    <a href="https://wa.me/56995127303" class="wsp-float" target="_blank" title="Contáctanos">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    </a>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Neumasur</h3>
+                <p>Especialistas en llantas y ruedas para todo tipo de vehículos.</p>
+                <p>San Rafael, Chile</p>
+                <p>Puerto Montt, Chile</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p>WhatsApp: <a href="https://wa.me/56995127303" target="_blank">+56 9 9512 7303</a></p>
+                <p>Email: info@neumasur.cl</p>
+            </div>
+            <div class="footer-section">
+                <h4>Redes Sociales</h4>
+                <ul>
+                    <li><a href="https://www.instagram.com/neumasur_/" target="_blank">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 NEUMASUR® - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>

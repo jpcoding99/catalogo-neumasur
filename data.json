@@ -1,33 +1,33 @@
 [
   {
-    "marca": "Michelin",
-    "modelo": "Pilot Sport 4",
-    "aro": 17,
-    "apernadura": "5x114.3",
-    "precio": 180000,
-    "imagen": "img/michelin/pilot-sport-4/17.jpg"
+    "marca": "BBS",
+    "modelo": "HYPERBLACK",
+    "aro": 14,
+    "apernadura": ["4x100", "4x114.3"],
+    "precio": 230000,
+    "imagen": "img/bbs/hyperblack/14.jpg"
   },
   {
-    "marca": "Michelin",
+    "marca": "Black Rhino",
     "modelo": "Pilot Sport 4",
     "aro": 18,
-    "apernadura": "5x114.3",
+    "apernadura": ["5x114.3"],
     "precio": 195000,
-    "imagen": "img/michelin/pilot-sport-4/18.jpg"
+    "imagen": "img/black-rhino/pilot-sport-4/18.jpg"
   },
   {
-    "marca": "Bridgestone",
+    "marca": "Fuel",
     "modelo": "Turanza T005",
     "aro": 16,
-    "apernadura": "4x100",
+    "apernadura": ["4x100"],
     "precio": 120000,
-    "imagen": "img/bridgestone/turanza-t005/16.jpg"
+    "imagen": "img/fuel/turanza-t005/16.jpg"
   },
   {
     "marca": "Bridgestone",
     "modelo": "Turanza T005",
     "aro": 17,
-    "apernadura": "4x100",
+    "apernadura": ["4x100"],
     "precio": 135000,
     "imagen": "img/bridgestone/turanza-t005/17.jpg"
   },
@@ -35,7 +35,7 @@
     "marca": "Continental",
     "modelo": "ContiSportContact 5",
     "aro": 18,
-    "apernadura": "5x112",
+    "apernadura": ["5x112"],
     "precio": 200000,
     "imagen": "img/continental/contisportcontact-5/18.jpg"
   }
