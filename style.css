@@ -433,6 +433,14 @@ select:focus {
     letter-spacing: 0.3px;
 }
 
+.color-text {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    font-weight: 600;
+    margin: 6px 0;
+    letter-spacing: 0.1px;
+}
+
 .card h3 {
     margin: 14px 0 6px;
     font-size: 1.1rem;

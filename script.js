@@ -45,7 +45,7 @@ async function cargarDatos() {
 // 4. Generar Filtros Dinámicos
 function generarFiltrosDinamicos() {
     const marcas = [...new Set(llantas.map(l => l.marca))].sort();
-    const aros = [...new Set(llantas.map(l => l.aro))].sort((a, b) => a - b);
+    const aros = [...new Set(llantas.flatMap(l => l.aro))].sort((a, b) => a - b);
     const apernaduras = [...new Set(llantas.flatMap(l => l.apernadura))].sort();
 
     // Configuración para móvil
@@ -90,14 +90,20 @@ function renderizarLlantas(lista) {
 
     grid.innerHTML = lista.map(llanta => {
         const aper = formatApernadura(llanta.apernadura);
-        const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.modelo} (Aro ${llanta.aro}, ${aper})`);
+        const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
+        const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
+        
         return `
             <div class="card">
-                <img src="${llanta.imagen}" alt="${llanta.modelo}" loading="lazy">
+                <img src="${llanta.imagen}.jpg" alt="${llanta.codigo}" loading="lazy">
                 <div class="card-info">
-                    <span class="tag">Aro ${llanta.aro}</span>
-                    <h3>${llanta.marca} ${llanta.modelo}</h3>
-                    <p class="specs">${aper}</p>
+                    <span class="tag">${llanta.codigo}</span>
+                    <h3>${llanta.codigo}</h3>
+                    <p class="color-text">${llanta.color}</p>
+                    <p class="specs">
+                        <strong>Medida:</strong> ${llanta.medida}<br>
+                        <strong>Aro:</strong> ${aroStr} | <strong>Apernadura:</strong> ${aper}
+                    </p>
                     <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
                     <a href="https://wa.me/56995127303?text=${msg}" target="_blank" class="btn-wsp-item">
                         Consultar Stock
@@ -126,7 +132,7 @@ function filtrarStock() {
     
     const filtrados = llantas.filter(l =>
         (m === 'todos' || l.marca === m) &&
-        (a === 'todos' || l.aro.toString() === a) &&
+        (a === 'todos' || l.aro.includes(parseInt(a))) &&
         (ap === 'todos' || l.apernadura.includes(ap))
     );
     renderizarLlantas(filtrados);
@@ -139,7 +145,7 @@ function filtrarStockDesktop() {
     
     const filtrados = llantas.filter(l =>
         (m === 'todos' || l.marca === m) &&
-        (a === 'todos' || l.aro.toString() === a) &&
+        (a === 'todos' || l.aro.includes(parseInt(a))) &&
         (ap === 'todos' || l.apernadura.includes(ap))
     );
     renderizarLlantas(filtrados);
