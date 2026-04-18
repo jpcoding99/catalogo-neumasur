@@ -27,6 +27,9 @@
             
             <!-- Navegación de Filtros Desktop -->
             <nav class="main-nav">
+                <div class="search-container">
+                    <input type="search" id="search-input" placeholder="Buscar por código, color...">
+                </div>
                 <div class="filter-group">
                     <select id="f-marca-desktop">
                         <option value="todos">Todas</option>
@@ -40,6 +43,13 @@
                 <div class="filter-group">
                     <select id="f-aper-desktop">
                         <option value="todos">Todas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="f-sort-desktop">
+                        <option value="default">Ordenar Por</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
                     </select>
                 </div>
             </nav>
@@ -71,6 +81,14 @@
                         <option value="todos">Todas</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <label for="f-sort">Ordenar Por</label>
+                    <select id="f-sort">
+                        <option value="default">Relevancia</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
+                    </select>
+                </div>
             </nav>
         </div>
     </header>
@@ -90,9 +108,23 @@
         </div>
         
         <div id="catalogo-grid" class="product-grid">
-            <p class="loading">Cargando stock de Neumasur...</p>
+            <!-- Los skeletons se inyectarán aquí -->
         </div>
     </main>
+
+    <!-- Modal/Popup para detalles del producto -->
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close-btn" title="Cerrar" aria-label="Cerrar">&times;</button>
+            <div id="modal-body">
+                <!-- El contenido del producto se inyectará aquí -->
+            </div>
+        </div>
+    </div>
+
+    <a href="#" id="back-to-top" class="back-to-top-btn" title="Volver arriba" aria-label="Volver arriba">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.9999 10.8284L7.75732 15.071L6.34311 13.6568L11.9999 8L17.6568 13.6568L16.2426 15.071L11.9999 10.8284Z"></path></svg>
+    </a>
 
     <a href="https://wa.me/56995127303" class="wsp-float" target="_blank" title="Contáctanos">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">

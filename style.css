@@ -45,6 +45,46 @@ body {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
+
+/* Skeleton Loader */
+.skeleton-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.skeleton-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--border-color);
+    animation: shimmer 1.5s infinite linear;
+    background-image: linear-gradient(90deg, var(--border-color) 0px, var(--bg-color) 40px, var(--border-color) 80px);
+    background-size: 600px;
+}
+
+.skeleton-info {
+    padding: 18px;
+}
+
+.skeleton-text {
+    height: 1em;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 10px;
+    animation: shimmer 1.5s infinite linear;
+    background-image: linear-gradient(90deg, var(--border-color) 0px, var(--bg-color) 40px, var(--border-color) 80px);
+    background-size: 600px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -300px 0;
+    }
+    100% {
+        background-position: 300px 0;
+    }
+}
 /* 2. Reset y Estilos Base */
 * {
     box-sizing: border-box;
@@ -317,6 +357,29 @@ header {
     min-width: 150px;
 }
 
+.search-container {
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(209, 73, 90, 0.1);
+}
+
+
 .filter-group:hover {
     border-color: var(--accent-color);
     background: rgba(255, 255, 255, 0.06);
@@ -506,6 +569,119 @@ select:focus {
     box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
 }
 
+/* 5. Modal de Producto */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 20, 25, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s 0.3s linear;
+    padding: 16px;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+}
+
+.modal-overlay.open .modal-content {
+    transform: scale(1);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2px;
+}
+
+.modal-close-btn:hover {
+    background: var(--accent-color);
+    transform: scale(1.1);
+}
+
+.modal-description {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    background-color: rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 8px;
+    margin: 16px 0;
+    text-align: left;
+    line-height: 1.5;
+}
+
+/* Back to Top Button */
+.back-to-top-btn {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1999;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+.back-to-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top-btn:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
 /* 6. Botón Flotante Global */
 .wsp-float {
     position: fixed;
@@ -664,6 +840,12 @@ footer {
         justify-content: center;
     }
 
+    .search-container {
+        order: -1; /* Pone el buscador primero */
+        margin-right: 20px;
+        max-width: 250px;
+    }
+
     .main-nav .filter-group {
         display: flex;
         align-items: center;
@@ -800,6 +982,14 @@ footer {
         box-shadow: 0 8px 20px rgba(37, 211, 102, 0.25);
     }
 
+    /* BACK TO TOP BUTTON */
+    .back-to-top-btn {
+        width: 52px;
+        height: 52px;
+        bottom: 120px;
+        right: 40px;
+    }
+
     /* FLOATING BUTTON */
     .wsp-float {
         width: 64px;
@@ -919,6 +1109,11 @@ footer {
         padding-bottom: 5px;
     }
     
+    .search-container {
+        width: 100%;
+        max-width: none;
+    }
+
     .header-actions {
         position: absolute;
         top: 12px;

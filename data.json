@@ -7,7 +7,8 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black + Silver Rivets",
     "precio": 439000,
-    "imagen": "img/BLACK_RHINO/FBX106/aro-16/106.jpg"
+    "imagen": "img/BLACK_RHINO/FBX106/aro-16/106",
+    "descripcion": "Ideal para Toyota Hilux, Mitsubishi L200, Ford Ranger (pre-2012)."
   },
   {
     "marca": "Black Rhino",
@@ -17,7 +18,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black + Silver Rivets & Spoke",
     "precio": 439000,
-    "imagen": "img/BLACK RHINO/JT212/aro-16"
+    "imagen": "img/BLACK_RHINO/JT212/aro-16"
   },
   {
     "marca": "Black Rhino",
@@ -27,7 +28,8 @@
     "apernadura": ["6x139.7", "6x135"],
     "color": "Matte Black",
     "precio": 439000,
-    "imagen": "img/BLACK RHINO/JT127/aro-16"
+    "imagen": "img/BLACK_RHINO/JT127/aro-16",
+    "descripcion": "Apernadura dual compatible con Ford F-150 y camionetas 6x139.7."
   },
   {
     "marca": "Black Rhino",
@@ -37,7 +39,7 @@
     "apernadura": ["6x139.7", "6x114.3"],
     "color": "Matte Black",
     "precio": 439000,
-    "imagen": "img/BLACK RHINO/JT220/aro-16"
+    "imagen": "img/BLACK_RHINO/JT220/aro-16"
   },
   {
     "marca": "Black Rhino",
@@ -47,7 +49,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black",
     "precio": 439000,
-    "imagen": "img/BLACK RHINO/JT138/aro-16"
+    "imagen": "img/BLACK_RHINO/JT138/aro-16"
   },
   {
     "marca": "Black Rhino",
@@ -57,7 +59,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black",
     "precio": 439000,
-    "imagen": "img/BLACK RHINO/JT218/aro-16"
+    "imagen": "img/BLACK_RHINO/JT218/aro-16"
   },
   {
     "marca": "Black Rhino",
@@ -67,7 +69,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/JT130/aro-17"
+    "imagen": "img/BLACK_RHINO/JT130/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -77,7 +79,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/JT169/aro-17"
+    "imagen": "img/BLACK_RHINO/JT169/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -87,7 +89,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black + Millink Spoke",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/FBX155/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX155/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -97,7 +99,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/FBX109/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX109/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -107,7 +109,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black + Silver Rivets",
     "precio": 499000,
-    "imagen": "img/BLACK RHINO/JT258/aro-17"
+    "imagen": "img/BLACK_RHINO/JT258/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -117,7 +119,7 @@
     "apernadura": ["6x139.7"],
     "color": "Black Matte",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/FBX146/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX146/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -127,7 +129,7 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black + Rivets",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/FBX040/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX040/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -137,7 +139,7 @@
     "apernadura": ["6x114.3"],
     "color": "Matte Black + Silver Rivets",
     "precio": 469990,
-    "imagen": "img/BLACK RHINO/FBX134/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX134/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -147,7 +149,7 @@
     "apernadura": ["6x114.3"],
     "color": "Matte Black + Text",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/FBX026/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX026/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -157,7 +159,7 @@
     "apernadura": ["6x114.3"],
     "color": "Matte Black",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/JT194/aro-17"
+    "imagen": "img/BLACK_RHINO/JT194/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -167,7 +169,7 @@
     "apernadura": ["6x135"],
     "color": "Matte Black",
     "precio": 520000,
-    "imagen": "img/BLACK RHINO/JT274/aro-17"
+    "imagen": "img/BLACK_RHINO/JT274/aro-17"
   },
   {
     "marca": "Black Rhino",
@@ -177,6 +179,6 @@
     "apernadura": ["6x139.7"],
     "color": "Matte Black + Silver Rivets",
     "precio": 469000,
-    "imagen": "img/BLACK RHINO/FBX099/aro-17"
+    "imagen": "img/BLACK_RHINO/FBX099/aro-17"
   }
 ]

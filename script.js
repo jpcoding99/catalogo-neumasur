@@ -1,6 +1,8 @@
 // 1. Variables Globales y Selección de Elementos
 let llantas = [];
 const grid = document.getElementById('catalogo-grid');
+const searchInput = document.getElementById('search-input');
+const modal = document.getElementById('product-modal');
 
 // Selects Móvil (Drawer)
 const selectMarca = document.getElementById('f-marca');
@@ -12,14 +14,29 @@ const selectMarcaDesktop = document.getElementById('f-marca-desktop');
 const selectAroDesktop = document.getElementById('f-aro-desktop');
 const selectAperDesktop = document.getElementById('f-aper-desktop');
 
+// Selects de Ordenamiento
+const selectSort = document.getElementById('f-sort');
+const selectSortDesktop = document.getElementById('f-sort-desktop');
+
 const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
-const selects = [selectMarca, selectAro, selectAper, selectMarcaDesktop, selectAroDesktop, selectAperDesktop];
+const selects = [
+    selectMarca, selectAro, selectAper, selectSort,
+    selectMarcaDesktop, selectAroDesktop, selectAperDesktop, selectSortDesktop
+];
 
 // 2. Tema Claro/Oscuro
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     const isLight = savedTheme === 'light';
+
+    // Corregir un bug visual en modo claro donde el fondo no se aplicaba correctamente
+    if (isLight) {
+        document.body.style.background = 'var(--bg-color)';
+    } else {
+        document.body.style.background = 'linear-gradient(135deg, var(--bg-color) 0%, #0a0c0e 100%)';
+    }
+
     if (isLight) document.body.classList.add('light-mode');
     themeIcon.textContent = isLight ? '☀️' : '🌙';
 
@@ -27,12 +44,20 @@ function initTheme() {
         const light = document.body.classList.toggle('light-mode');
         themeIcon.textContent = light ? '☀️' : '🌙';
         localStorage.setItem('theme', light ? 'light' : 'dark');
+
+        // Corregir un bug visual en modo claro donde el fondo no se aplicaba correctamente
+        if (light) {
+            document.body.style.background = 'var(--bg-color)';
+        } else {
+            document.body.style.background = 'linear-gradient(135deg, var(--bg-color) 0%, #0a0c0e 100%)';
+        }
     });
 }
 
 // 3. Cargar Datos
 async function cargarDatos() {
     try {
+        renderizarSkeletons(8); // Mostrar 8 skeletons mientras carga
         llantas = await fetch('data.json').then(r => r.json());
         generarFiltrosDinamicos();
         renderizarLlantas(llantas);
@@ -73,7 +98,7 @@ function generarFiltrosDinamicos() {
     });
 
     // Sincronizar valores iniciales
-    syncSelects('todos', 'todos', 'todos');
+    syncSelects('todos', 'todos', 'todos', 'default');
 }
 
 // 5. Helper para formato de apernadura
@@ -81,7 +106,23 @@ function formatApernadura(aper) {
     return Array.isArray(aper) ? aper.join(', ') : aper;
 }
 
-// 6. Renderizar Llantas
+// 6. Renderizar Skeletons y Llantas
+function renderizarSkeletons(cantidad) {
+    const skeletonHTML = `
+        <div class="skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-info">
+                <div class="skeleton-text" style="width: 40%;"></div>
+                <div class="skeleton-text" style="width: 80%; height: 1.5em; margin-top: 15px;"></div>
+                <div class="skeleton-text" style="width: 60%;"></div>
+                <div class="skeleton-text" style="width: 90%; margin-top: 15px;"></div>
+                <div class="skeleton-text" style="width: 50%; height: 2em; margin-top: 20px;"></div>
+            </div>
+        </div>
+    `;
+    grid.innerHTML = Array(cantidad).fill(skeletonHTML).join('');
+}
+
 function renderizarLlantas(lista) {
     if (lista.length === 0) {
         grid.innerHTML = '<p class="loading">No hay modelos con esos filtros.</p>';
@@ -94,7 +135,7 @@ function renderizarLlantas(lista) {
         const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
         
         return `
-            <div class="card">
+            <div class="card" data-codigo="${llanta.codigo}">
                 <img src="${llanta.imagen}.jpg" alt="${llanta.codigo}" loading="lazy">
                 <div class="card-info">
                     <span class="tag">${llanta.codigo}</span>
@@ -115,40 +156,62 @@ function renderizarLlantas(lista) {
 }
 
 // 7. Sincronizar Selects (Móvil y Desktop)
-function syncSelects(sourceMarca, sourceAro, sourceAper) {
+function syncSelects(marca, aro, aper, sort) {
     // Sincronizar valores entre móvil y desktop
-    selectMarca.value = sourceMarca;
-    selectAro.value = sourceAro;
-    selectAper.value = sourceAper;
-    selectMarcaDesktop.value = sourceMarca;
-    selectAroDesktop.value = sourceAro;
-    selectAperDesktop.value = sourceAper;
+    selectMarca.value = marca;
+    selectAro.value = aro;
+    selectAper.value = aper;
+    selectSort.value = sort;
+
+    selectMarcaDesktop.value = marca;
+    selectAroDesktop.value = aro;
+    selectAperDesktop.value = aper;
+    selectSortDesktop.value = sort;
 }
 
 // 8. Filtrar Stock
-function filtrarStock() {
-    const [m, a, ap] = [selectMarca.value, selectAro.value, selectAper.value];
-    syncSelects(m, a, ap);
-    
-    const filtrados = llantas.filter(l =>
-        (m === 'todos' || l.marca === m) &&
-        (a === 'todos' || l.aro.includes(parseInt(a))) &&
-        (ap === 'todos' || l.apernadura.includes(ap))
-    );
+function filtrarYRenderizar() {
+    // Lee los valores de los filtros y del buscador
+    const m = selectMarca.value; // marca
+    const a = selectAro.value; // aro
+    const ap = selectAper.value; // apernadura
+    const sort = selectSort.value; // ordenamiento
+    const searchTerm = searchInput.value.toLowerCase().trim();
+
+    let filtrados = llantas.filter(l => {
+        // Condición de los selects
+        const matchesSelects = (m === 'todos' || l.marca === m) &&
+                               (a === 'todos' || l.aro.includes(parseInt(a))) &&
+                               (ap === 'todos' || l.apernadura.includes(ap));
+
+        // Condición de la búsqueda
+        const matchesSearch = searchTerm === '' ||
+                              l.codigo.toLowerCase().includes(searchTerm) ||
+                              l.color.toLowerCase().includes(searchTerm) ||
+                              (l.descripcion && l.descripcion.toLowerCase().includes(searchTerm));
+
+        return matchesSelects && matchesSearch;
+    });
+
+    // Aplicar ordenamiento
+    if (sort === 'price-asc') {
+        filtrados.sort((x, y) => x.precio - y.precio);
+    } else if (sort === 'price-desc') {
+        filtrados.sort((x, y) => y.precio - x.precio);
+    }
+
     renderizarLlantas(filtrados);
 }
 
-// Función alternativa para filtrar desde selects desktop
-function filtrarStockDesktop() {
-    const [m, a, ap] = [selectMarcaDesktop.value, selectAroDesktop.value, selectAperDesktop.value];
-    syncSelects(m, a, ap);
+// Función que se activa con el evento 'change' para sincronizar y luego filtrar
+function handleFilterChange(event) {
+    const source = event.target.id.includes('-desktop') ? 'desktop' : 'mobile';
+    const [m, a, ap, s] = source === 'desktop' 
+        ? [selectMarcaDesktop.value, selectAroDesktop.value, selectAperDesktop.value, selectSortDesktop.value]
+        : [selectMarca.value, selectAro.value, selectAper.value, selectSort.value];
     
-    const filtrados = llantas.filter(l =>
-        (m === 'todos' || l.marca === m) &&
-        (a === 'todos' || l.aro.includes(parseInt(a))) &&
-        (ap === 'todos' || l.apernadura.includes(ap))
-    );
-    renderizarLlantas(filtrados);
+    syncSelects(m, a, ap, s);
+    filtrarYRenderizar();
 }
 
 // 8. Drawer Menu Management
@@ -199,18 +262,100 @@ function initDrawerMenu() {
     });
 }
 
+// 9. Modal de Producto
+function initModal() {
+    if (!modal) return;
+
+    const modalBody = document.getElementById('modal-body');
+    const modalCloseBtn = document.getElementById('modal-close');
+
+    function openModal(codigo) {
+        const llanta = llantas.find(l => l.codigo === codigo);
+        if (!llanta) return;
+
+        // Reutilizar la lógica de renderizado de la tarjeta
+        const aper = formatApernadura(llanta.apernadura);
+        const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
+        const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
+        
+        const descripcionHTML = llanta.descripcion 
+            ? `<p class="modal-description">${llanta.descripcion}</p>` 
+            : '';
+
+        // Inyectar el HTML de la tarjeta dentro del cuerpo del modal
+        modalBody.innerHTML = `
+            <div class="card">
+                <img src="${llanta.imagen}.jpg" alt="${llanta.codigo}">
+                <div class="card-info">
+                    <span class="tag">${llanta.codigo}</span>
+                    <h3>${llanta.codigo}</h3>
+                    <p class="color-text">${llanta.color}</p>
+                    <p class="specs">
+                        <strong>Medida:</strong> ${llanta.medida}<br>
+                        <strong>Aro:</strong> ${aroStr} | <strong>Apernadura:</strong> ${aper}
+                    </p>
+                    ${descripcionHTML}
+                    <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
+                    <a href="https://wa.me/56995127303?text=${msg}" target="_blank" class="btn-wsp-item">
+                        Consultar Stock
+                    </a>
+                </div>
+            </div>`;
+
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = ''; // Restaura el scroll
+    }
+
+    // Evento para abrir el modal (delegación de eventos)
+    grid.addEventListener('click', (e) => {
+        const card = e.target.closest('.card');
+        if (card && card.dataset.codigo) {
+            openModal(card.dataset.codigo);
+        }
+    });
+
+    // Eventos para cerrar el modal
+    modalCloseBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => e.target === modal && closeModal());
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+}
+
+// 10. Botón "Volver Arriba"
+function initBackToTopButton() {
+    const backToTopBtn = document.getElementById('back-to-top');
+    if (!backToTopBtn) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
 // 11. Event Listeners
-// Listeners para selects móvil
-[selectMarca, selectAro, selectAper].forEach(select => {
-    select.addEventListener('change', filtrarStock);
+// Un solo conjunto de listeners para todos los selects
+selects.forEach(select => {
+    select.addEventListener('change', handleFilterChange);
 });
 
-// Listeners para selects desktop
-[selectMarcaDesktop, selectAroDesktop, selectAperDesktop].forEach(select => {
-    select.addEventListener('change', filtrarStockDesktop);
-});
+// Listener para el input de búsqueda
+searchInput.addEventListener('input', filtrarYRenderizar);
 
 // Iniciar App
 initTheme();
 initDrawerMenu();
+initBackToTopButton();
+initModal();
 cargarDatos();
