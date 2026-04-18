@@ -199,6 +199,11 @@ header {
     text-align: center;
 }
 
+.logo-section a {
+    text-decoration: none;
+    display: inline-block;
+}
+
 .logo {
     max-width: 120px;
     height: auto;
@@ -456,19 +461,38 @@ select:focus {
     position: relative;
 }
 
-.card:active {
+.card:hover {
     transform: translateY(-8px);
     border-color: var(--accent-color);
-    box-shadow: 0 8px 20px rgba(209, 73, 90, 0.2);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15), 0 0 30px rgba(209, 73, 90, 0.35);
+}
+
+.card:active {
+    transform: translateY(-10px);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 25px rgba(209, 73, 90, 0.25);
 }
 
 .card img {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
-    background-color: #000;
+    background-color: var(--border-color); /* Fondo mientras carga la imagen */
     transition: transform 0.4s ease;
     display: block;
+}
+
+.card img.lazy-img {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.card img.lazy-img.loaded {
+    opacity: 1;
+}
+
+.card:hover img {
+    transform: scale(1.03);
 }
 
 .card:active img {

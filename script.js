@@ -1,5 +1,6 @@
 // 1. Variables Globales y Selección de Elementos
 let llantas = [];
+let lazyLoadObserver;
 const grid = document.getElementById('catalogo-grid');
 const searchInput = document.getElementById('search-input');
 const modal = document.getElementById('product-modal');
@@ -60,7 +61,7 @@ async function cargarDatos() {
         renderizarSkeletons(8); // Mostrar 8 skeletons mientras carga
         llantas = await fetch('data.json').then(r => r.json());
         generarFiltrosDinamicos();
-        renderizarLlantas(llantas);
+        aplicarFiltrosDesdeURL(); // Aplica filtros de la URL al cargar
     } catch (error) {
         console.error("Error al cargar data.json:", error);
         grid.innerHTML = '<p class="loading">Error al cargar el catálogo</p>';
@@ -136,7 +137,7 @@ function renderizarLlantas(lista) {
         
         return `
             <div class="card" data-codigo="${llanta.codigo}">
-                <img src="${llanta.imagen}.jpg" alt="${llanta.codigo}" loading="lazy">
+                <img data-src="${llanta.imagen}.jpg" alt="${llanta.codigo}" class="lazy-img" loading="lazy">
                 <div class="card-info">
                     <span class="tag">${llanta.codigo}</span>
                     <h3>${llanta.codigo}</h3>
@@ -153,6 +154,10 @@ function renderizarLlantas(lista) {
             </div>
         `;
     }).join('');
+
+    // Observar las nuevas imágenes para lazy loading
+    const newImages = grid.querySelectorAll('.lazy-img');
+    newImages.forEach(img => lazyLoadObserver.observe(img));
 }
 
 // 7. Sincronizar Selects (Móvil y Desktop)
@@ -201,6 +206,26 @@ function filtrarYRenderizar() {
     }
 
     renderizarLlantas(filtrados);
+    actualizarURL(); // Actualiza la URL con los filtros actuales
+}
+
+// Actualiza la URL con los parámetros de filtro actuales
+function actualizarURL() {
+    const params = new URLSearchParams();
+    const m = selectMarca.value;
+    const a = selectAro.value;
+    const ap = selectAper.value;
+    const sort = selectSort.value;
+    const searchTerm = searchInput.value.trim();
+
+    if (m !== 'todos') params.set('marca', m);
+    if (a !== 'todos') params.set('aro', a);
+    if (ap !== 'todos') params.set('apernadura', ap);
+    if (sort !== 'default') params.set('sort', sort);
+    if (searchTerm !== '') params.set('q', searchTerm);
+
+    const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+    history.replaceState({path: newUrl}, '', newUrl);
 }
 
 // Función que se activa con el evento 'change' para sincronizar y luego filtrar
@@ -214,7 +239,46 @@ function handleFilterChange(event) {
     filtrarYRenderizar();
 }
 
-// 8. Drawer Menu Management
+// Lee los parámetros de la URL al cargar la página y aplica los filtros
+function aplicarFiltrosDesdeURL() {
+    const params = new URLSearchParams(window.location.search);
+    const marca = params.get('marca') || 'todos';
+    const aro = params.get('aro') || 'todos';
+    const apernadura = params.get('apernadura') || 'todos';
+    const sort = params.get('sort') || 'default';
+    const q = params.get('q') || '';
+
+    searchInput.value = q;
+    syncSelects(marca, aro, apernadura, sort);
+    filtrarYRenderizar();
+}
+
+// 9. Lazy Loading de Imágenes
+function setupLazyLoader() {
+    const options = {
+        rootMargin: '0px 0px 200px 0px' // Empezar a cargar 200px antes de que entre en el viewport
+    };
+
+    lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const src = img.dataset.src;
+
+                if (!src) return;
+
+                img.src = src;
+                img.addEventListener('load', () => {
+                    img.classList.add('loaded');
+                });
+
+                observer.unobserve(img);
+            }
+        });
+    }, options);
+}
+
+// 10. Drawer Menu Management
 function initDrawerMenu() {
     const menuToggle = document.getElementById('menu-toggle');
     const drawerMenu = document.getElementById('drawer-menu');
@@ -262,7 +326,7 @@ function initDrawerMenu() {
     });
 }
 
-// 9. Modal de Producto
+// 11. Modal de Producto
 function initModal() {
     if (!modal) return;
 
@@ -325,7 +389,7 @@ function initModal() {
     document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
 }
 
-// 10. Botón "Volver Arriba"
+// 12. Botón "Volver Arriba"
 function initBackToTopButton() {
     const backToTopBtn = document.getElementById('back-to-top');
     if (!backToTopBtn) return;
@@ -344,7 +408,29 @@ function initBackToTopButton() {
     });
 }
 
-// 11. Event Listeners
+// 13. Acción del Logo para Resetear
+function initLogoAction() {
+    const logoLink = document.getElementById('logo-link');
+    if (!logoLink) return;
+
+    logoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // 1. Resetear la barra de búsqueda
+        searchInput.value = '';
+
+        // 2. Resetear los filtros a su estado inicial
+        syncSelects('todos', 'todos', 'todos', 'default');
+
+        // 3. Volver a renderizar el catálogo completo
+        filtrarYRenderizar();
+
+        // 4. Desplazar la vista al inicio de la página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+// 14. Event Listeners
 // Un solo conjunto de listeners para todos los selects
 selects.forEach(select => {
     select.addEventListener('change', handleFilterChange);
@@ -355,7 +441,9 @@ searchInput.addEventListener('input', filtrarYRenderizar);
 
 // Iniciar App
 initTheme();
+setupLazyLoader();
 initDrawerMenu();
 initBackToTopButton();
 initModal();
+initLogoAction();
 cargarDatos();
