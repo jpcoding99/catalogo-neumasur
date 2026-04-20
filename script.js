@@ -50,11 +50,11 @@ function initTheme() {
     // Función para actualizar el ícono del botón según la configuración (light, dark, auto)
     function updateIcon(setting) {
         if (setting === 'light') {
-            themeIcon.textContent = '☀️';
+            themeIcon.textContent = 'Claro';
         } else if (setting === 'dark') {
-            themeIcon.textContent = '🌙';
+            themeIcon.textContent = 'Oscuro';
         } else { // 'auto'
-            themeIcon.textContent = '🖥️';
+            themeIcon.textContent = 'Automático';
         }
     }
 
