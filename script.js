@@ -27,30 +27,67 @@ const selects = [
 ];
 
 // 2. Tema Claro/Oscuro
+// 2. Tema Claro/Oscuro (con soporte para preferencia del sistema)
 function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    const isLight = savedTheme === 'light';
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
 
-    // Corregir un bug visual en modo claro donde el fondo no se aplicaba correctamente
-    if (isLight) {
-        document.body.style.background = 'var(--bg-color)';
-    } else {
-        document.body.style.background = 'linear-gradient(135deg, var(--bg-color) 0%, #0a0c0e 100%)';
-    }
-
-    if (isLight) document.body.classList.add('light-mode');
-    themeIcon.textContent = isLight ? '☀️' : '🌙';
-
-    themeToggle.addEventListener('click', () => {
-        const light = document.body.classList.toggle('light-mode');
-        themeIcon.textContent = light ? '☀️' : '🌙';
-        localStorage.setItem('theme', light ? 'light' : 'dark');
-
+    // Función para aplicar el tema (claro u oscuro) al body
+    function applyTheme(theme) {
+        const isLight = theme === 'light';
+        document.body.classList.toggle('light-mode', isLight);
+        
         // Corregir un bug visual en modo claro donde el fondo no se aplicaba correctamente
-        if (light) {
+        if (isLight) {
             document.body.style.background = 'var(--bg-color)';
         } else {
             document.body.style.background = 'linear-gradient(135deg, var(--bg-color) 0%, #0a0c0e 100%)';
+        }
+    }
+
+    // Función para actualizar el ícono del botón según la configuración (light, dark, auto)
+    function updateIcon(setting) {
+        if (setting === 'light') {
+            themeIcon.textContent = '☀️';
+        } else if (setting === 'dark') {
+            themeIcon.textContent = '🌙';
+        } else { // 'auto'
+            themeIcon.textContent = '🖥️';
+        }
+    }
+
+    // Obtiene el tema que se debe mostrar, considerando la configuración 'auto'
+    function getEffectiveTheme(setting) {
+        if (setting === 'auto') {
+            return prefersDarkScheme.matches ? 'dark' : 'light';
+        }
+        return setting;
+    }
+
+    // Carga inicial
+    let currentSetting = localStorage.getItem('theme') || 'auto';
+    applyTheme(getEffectiveTheme(currentSetting));
+    updateIcon(currentSetting);
+
+    // Listener para el clic en el botón de tema (cicla: Claro -> Oscuro -> Auto)
+    themeToggle.addEventListener('click', () => {
+        if (currentSetting === 'light') {
+            currentSetting = 'dark';
+        } else if (currentSetting === 'dark') {
+            currentSetting = 'auto';
+        } else { // 'auto'
+            currentSetting = 'light';
+        }
+        
+        localStorage.setItem('theme', currentSetting);
+        applyTheme(getEffectiveTheme(currentSetting));
+        updateIcon(currentSetting);
+    });
+
+    // Listener para cuando el sistema operativo cambia de tema
+    prefersDarkScheme.addEventListener('change', (e) => {
+        // Solo actualiza si el usuario tiene la configuración en 'auto'
+        if (localStorage.getItem('theme') === 'auto' || !localStorage.getItem('theme')) {
+            applyTheme(e.matches ? 'dark' : 'light');
         }
     });
 }
