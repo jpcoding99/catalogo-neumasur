@@ -16,7 +16,7 @@ exports.handler = async function(event, context) {
         }
 
         console.log("Intentando conectar a MongoDB...");
-        const client = new MongoClient(mongoUri);
+        client = new MongoClient(mongoUri);
         await client.connect();
         console.log("Conexión a MongoDB exitosa.");
         
