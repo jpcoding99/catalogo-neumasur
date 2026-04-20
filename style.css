@@ -350,6 +350,53 @@ header {
     transform: scale(1.08);
 }
 
+/* Theme Selector Dropdown */
+.theme-selector {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.theme-options-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    z-index: 1001;
+    min-width: 160px;
+    padding: 6px;
+    overflow: hidden;
+}
+
+.theme-options-menu.open {
+    display: block;
+}
+
+.theme-options-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.theme-options-menu button:hover,
+.theme-options-menu button.active {
+    background-color: var(--border-color);
+    color: var(--text-main);
+}
+
 .filter-group {
     display: flex;
     flex-direction: column;

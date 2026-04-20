@@ -21,6 +21,8 @@ const selectSortDesktop = document.getElementById('f-sort-desktop');
 
 const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
+const themeOptionsContainer = document.getElementById('theme-options');
+
 const selects = [
     selectMarca, selectAro, selectAper, selectSort,
     selectMarcaDesktop, selectAroDesktop, selectAperDesktop, selectSortDesktop
@@ -30,6 +32,7 @@ const selects = [
 // 2. Tema Claro/Oscuro (con soporte para preferencia del sistema)
 function initTheme() {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const themeOptionButtons = themeOptionsContainer.querySelectorAll('button');
 
     // Función para aplicar el tema (claro u oscuro) al body
     function applyTheme(theme) {
@@ -63,24 +66,35 @@ function initTheme() {
         return setting;
     }
 
+    function setSetting(setting) {
+        // 1. Guardar en localStorage
+        localStorage.setItem('theme', setting);
+        // 2. Aplicar el tema visual
+        applyTheme(getEffectiveTheme(setting));
+        // 3. Actualizar el ícono principal
+        updateIcon(setting);
+        // 4. Marcar la opción activa en el menú
+        themeOptionButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === setting);
+        });
+    }
+
     // Carga inicial
     let currentSetting = localStorage.getItem('theme') || 'auto';
-    applyTheme(getEffectiveTheme(currentSetting));
-    updateIcon(currentSetting);
+    setSetting(currentSetting);
 
-    // Listener para el clic en el botón de tema (cicla: Claro -> Oscuro -> Auto)
-    themeToggle.addEventListener('click', () => {
-        if (currentSetting === 'light') {
-            currentSetting = 'dark';
-        } else if (currentSetting === 'dark') {
-            currentSetting = 'auto';
-        } else { // 'auto'
-            currentSetting = 'light';
-        }
-        
-        localStorage.setItem('theme', currentSetting);
-        applyTheme(getEffectiveTheme(currentSetting));
-        updateIcon(currentSetting);
+    // Listener para abrir/cerrar el menú de opciones
+    themeToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        themeOptionsContainer.classList.toggle('open');
+    });
+
+    // Listeners para cada botón de opción
+    themeOptionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            setSetting(button.dataset.theme);
+            themeOptionsContainer.classList.remove('open'); // Cerrar menú
+        });
     });
 
     // Listener para cuando el sistema operativo cambia de tema
@@ -88,6 +102,13 @@ function initTheme() {
         // Solo actualiza si el usuario tiene la configuración en 'auto'
         if (localStorage.getItem('theme') === 'auto' || !localStorage.getItem('theme')) {
             applyTheme(e.matches ? 'dark' : 'light');
+        }
+    });
+
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!themeToggle.contains(e.target) && !themeOptionsContainer.contains(e.target)) {
+            themeOptionsContainer.classList.remove('open');
         }
     });
 }
