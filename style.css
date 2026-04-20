@@ -12,11 +12,11 @@
 
 /* Variables para el Modo Claro */
 body.light-mode {
-    --bg-color: #ffffff;
-    --card-bg: #f8f9fa;
+    --bg-color: #f4f6f8; /* Un gris muy claro para el fondo */
+    --card-bg: #ffffff; /* Tarjetas y header en blanco puro */
     --text-main: #212529;
-    --text-dim: #6c757d;
-    --border-color: #e9ecef;
+    --text-dim: #5a6169;
+    --border-color: #dee2e6; /* Bordes más sutiles */
     --accent-color: #e74c3c;
 }
 
@@ -174,13 +174,13 @@ body {
 
 /* 3. Header y Filtros (Sticky) */
 header {
-    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.02) 100%);
+    background-color: var(--card-bg);
     backdrop-filter: blur(20px);
     position: sticky;
-    top: 0;
+    top: 37px; /* Ajustado por el banner de anuncio */
     z-index: 1000;
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .header-container {
@@ -498,24 +498,17 @@ select:focus {
 }
 .card {
     background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border: 1px solid transparent; /* Borde transparente por defecto */
+    border-radius: 12px; /* Bordes un poco menos redondeados */
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.08);
     position: relative;
 }
 
 .card:hover {
-    transform: translateY(-8px);
-    border-color: var(--accent-color);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15), 0 0 30px rgba(209, 73, 90, 0.35);
-}
-
-.card:active {
-    transform: translateY(-10px);
-    border-color: var(--accent-color);
-    box-shadow: 0 10px 25px rgba(209, 73, 90, 0.25);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08), 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .card img {
@@ -551,17 +544,13 @@ select:focus {
 }
 
 .tag {
-    background: linear-gradient(135deg, var(--accent-color), #e85870);
-    font-size: 0.65rem;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: 700;
-    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dim);
     position: absolute;
-    top: -8px;
+    top: 12px;
     left: 50%;
     transform: translateX(-50%);
-    box-shadow: 0 2px 8px rgba(209, 73, 90, 0.2);
     letter-spacing: 0.3px;
 }
 
@@ -574,7 +563,7 @@ select:focus {
 }
 
 .card h3 {
-    margin: 14px 0 6px;
+    margin: 24px 0 6px; /* Más espacio sobre el título */
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.2px;
@@ -590,52 +579,30 @@ select:focus {
 .price {
     display: block;
     margin: 14px 0;
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: #2ecc71;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    color: var(--text-main);
     letter-spacing: -0.3px;
 }
 
 /* Botón WhatsApp dentro de la Card */
 .btn-wsp-item {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: linear-gradient(135deg, var(--wsp-green), #25d366);
-    color: white;
+    background: transparent;
+    color: var(--wsp-green);
     text-decoration: none;
     padding: 11px 18px;
-    border-radius: 24px;
+    border-radius: 8px;
     font-weight: 600;
     font-size: 0.85rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
-    position: relative;
-    overflow: hidden;
-    border: none;
+    border: 2px solid var(--wsp-green);
     width: 100%;
 }
 
-.btn-wsp-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn-wsp-item:active::before {
-    left: 100%;
-}
-
-.btn-wsp-item:active {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+.btn-wsp-item:hover {
+    background: var(--wsp-green);
+    color: white;
 }
 
 /* 5. Modal de Producto */
