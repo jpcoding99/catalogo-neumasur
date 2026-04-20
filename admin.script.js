@@ -1,6 +1,6 @@
 // --- CONFIGURACIÓN ---
 const ADMIN_PASSWORD = '21851963'; // <-- ¡CONTRASEÑA!
-const ADMIN_SECRET_KEY = 'tu_llave_secreta_aqui'; // <-- ¡IMPORTANTE! Usa la misma que en Netlify
+const ADMIN_SECRET_KEY = 'kE7bLp9sR2vXzW8qA4nCjF1gH5mP3uT'; // <-- ¡IMPORTANTE! Usa la misma que en Netlify
 // -------------------
 
 let llantas = [];
