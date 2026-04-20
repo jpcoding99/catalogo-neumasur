@@ -64,8 +64,8 @@ async function cargarDatos() {
         generarFiltrosDinamicos();
         aplicarFiltrosDesdeURL(); // Aplica filtros de la URL al cargar
     } catch (error) {
-        console.error("Error al cargar data.json:", error);
-        grid.innerHTML = '<p class="loading">Error al cargar el catálogo</p>';
+        console.error("Error al cargar datos del catálogo:", error);
+        grid.innerHTML = '<p class="loading">Error al cargar el catálogo. Por favor, inténtalo de nuevo más tarde.</p>';
     }
 }
 
