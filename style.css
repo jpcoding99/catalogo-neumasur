@@ -849,7 +849,7 @@ footer {
 
     /* Mostrar navegación horizontal en desktop */
     .main-nav {
-        display: flex !important;
+        display: flex;
         position: static;
         left: auto;
         top: auto;
@@ -974,25 +974,6 @@ footer {
     .product-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 32px;
-    }
-
-    .producto-card {
-        padding: 24px;
-        transition: all 0.3s ease;
-    }
-
-    .producto-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 48px rgba(209, 73, 90, 0.15);
-    }
-
-    .producto-card h3 {
-        font-size: 1.25rem;
-        margin-bottom: 8px;
-    }
-
-    .producto-card .price {
-        font-size: 1.5rem;
     }
 
     .btn-wsp-item {
@@ -1294,5 +1275,4 @@ footer {
         grid-template-columns: 1fr;
         gap: 32px;
     }
-}
 }
