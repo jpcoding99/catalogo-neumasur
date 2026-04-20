@@ -1,5 +1,6 @@
 // --- CONFIGURACIÓN ---
 const ADMIN_PASSWORD = '21851963'; // <-- ¡CONTRASEÑA!
+const ADMIN_SECRET_KEY = 'tu_llave_secreta_aqui'; // <-- ¡IMPORTANTE! Usa la misma que en Netlify
 // -------------------
 
 let llantas = [];
@@ -18,7 +19,7 @@ const formTitle = document.getElementById('form-title');
 const formMode = document.getElementById('form-mode');
 const closeModalBtn = document.getElementById('modal-close-admin');
 const addProductBtn = document.getElementById('add-product-btn');
-const exportBtn = document.getElementById('export-json-btn');
+const saveBtn = document.getElementById('export-json-btn'); // Renombrado en HTML a 'save-changes-btn'
 
 
 // --- AUTENTICACIÓN ---
@@ -142,23 +143,40 @@ form.addEventListener('submit', (e) => {
 });
 
 
-// --- EXPORTACIÓN ---
+// --- GUARDAR CAMBIOS EN LA BASE DE DATOS ---
 
-function exportJson() {
-    if (confirm('Esto generará un archivo "data.json" para que lo descargues. ¿Continuar?')) {
-        const jsonString = JSON.stringify(llantas, null, 2); // El '2' es para que el JSON se vea ordenado
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+async function saveChangesToDB() {
+    if (!confirm('¿Estás seguro de que quieres guardar todos los cambios en la base de datos? Esta acción es irreversible.')) {
+        return;
+    }
 
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'data.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Guardando...';
 
-        alert('El archivo "data.json" se ha descargado. \n\nAhora debes subirlo a tu servidor para reemplazar el archivo antiguo y que los cambios se hagan efectivos.');
+    try {
+        const response = await fetch('/.netlify/functions/update-products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Admin-Secret': ADMIN_SECRET_KEY 
+            },
+            body: JSON.stringify(llantas)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.details || `Error del servidor: ${response.statusText}`);
+        }
+
+        originalLlantasState = JSON.stringify(llantas); // Actualizar el estado original
+        alert('¡Éxito! Los cambios se han guardado en la base de datos.');
+
+    } catch (error) {
+        console.error('Error al guardar los cambios:', error);
+        alert(`Error al guardar los cambios: ${error.message}`);
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar Cambios en la Base de Datos';
     }
 }
 
@@ -171,7 +189,7 @@ modal.addEventListener('click', (e) => {
         closeModal();
     }
 });
-exportBtn.addEventListener('click', exportJson);
+saveBtn.addEventListener('click', saveChangesToDB);
 
 // Advertir al usuario si intenta salir con cambios sin guardar
 window.addEventListener('beforeunload', (e) => {
