@@ -41,13 +41,16 @@ passwordInput.addEventListener('keyup', (e) => {
 // --- CARGA Y RENDERIZADO DE PRODUCTOS ---
 async function loadProducts() {
     try {
-        const response = await fetch('data.json');
+        const response = await fetch('/.netlify/functions/get-products');
+        if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.statusText}`);
+        }
         llantas = await response.json();
         originalLlantasState = JSON.stringify(llantas); // Guardar estado original
         renderProductList();
     } catch (error) {
         console.error('Error al cargar los productos:', error);
-        productListContainer.innerHTML = '<p>No se pudieron cargar los productos.</p>';
+        productListContainer.innerHTML = '<p>No se pudieron cargar los productos desde la base de datos.</p>';
     }
 }
 
