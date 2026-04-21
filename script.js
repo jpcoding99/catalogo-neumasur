@@ -194,8 +194,14 @@ function renderizarLlantas(lista) {
         const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
         const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
         
+        const isSoldOut = llanta.agotado;
+        const cardClass = isSoldOut ? 'card sold-out' : 'card';
+        const buttonHTML = isSoldOut
+            ? '<button class="btn-wsp-item" disabled>Agotado</button>'
+            : `<a href="https://wa.me/56995127303?text=${msg}" target="_blank" class="btn-wsp-item">Consultar Stock</a>`;
+
         return `
-            <div class="card" data-codigo="${llanta.codigo}">
+            <div class="${cardClass}" data-codigo="${llanta.codigo}">
                 <img data-src="${llanta.imagen}.jpg" alt="${llanta.codigo}" class="lazy-img" loading="lazy">
                 <div class="card-info">
                     <span class="tag">${llanta.codigo}</span>
@@ -206,9 +212,7 @@ function renderizarLlantas(lista) {
                         <strong>Aro:</strong> ${aroStr} | <strong>Apernadura:</strong> ${aper}
                     </p>
                     <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
-                    <a href="https://wa.me/56995127303?text=${msg}" target="_blank" class="btn-wsp-item">
-                        Consultar Stock
-                    </a>
+                    ${buttonHTML}
                 </div>
             </div>
         `;

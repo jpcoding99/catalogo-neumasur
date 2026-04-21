@@ -61,11 +61,13 @@ function renderProductList() {
         return;
     }
 
-    productListContainer.innerHTML = llantas.map((llanta, index) => `
+    productListContainer.innerHTML = llantas.map((llanta, index) => {
+        const agotadoBadge = llanta.agotado ? '<span class="status-badge">Agotado</span>' : '';
+        return `
         <div class="product-item-admin" data-index="${index}">
             <img src="${llanta.imagen}.jpg" alt="${llanta.codigo}" onerror="this.src='img/LOGO.png'">
             <div class="info">
-                <h4>${llanta.marca} - ${llanta.codigo}</h4>
+                <h4>${llanta.marca} - ${llanta.codigo}${agotadoBadge}</h4>
                 <p>${llanta.color} | $${llanta.precio.toLocaleString('es-CL')}</p>
             </div>
             <div class="actions">
@@ -73,7 +75,8 @@ function renderProductList() {
                 <button class="btn-admin btn-delete" onclick="deleteProduct(${index})">Eliminar</button>
             </div>
         </div>
-    `).join('');
+    `
+    }).join('');
 }
 
 // --- GESTIÓN DE PRODUCTOS (CRUD) ---
@@ -88,6 +91,7 @@ function deleteProduct(index) {
 function openAddModal() {
     form.reset();
     formTitle.textContent = 'Añadir Nuevo Producto';
+    document.getElementById('agotado').checked = false;
     formMode.value = 'add';
     modal.classList.add('open');
 }
@@ -107,6 +111,7 @@ function openEditModal(index) {
     document.getElementById('precio').value = llanta.precio || '';
     document.getElementById('imagen').value = llanta.imagen || '';
     document.getElementById('descripcion').value = llanta.descripcion || '';
+    document.getElementById('agotado').checked = llanta.agotado || false;
 
     modal.classList.add('open');
 }
@@ -128,6 +133,7 @@ form.addEventListener('submit', (e) => {
         precio: parseInt(document.getElementById('precio').value),
         imagen: document.getElementById('imagen').value,
         descripcion: document.getElementById('descripcion').value,
+        agotado: document.getElementById('agotado').checked,
     };
 
     const mode = formMode.value;

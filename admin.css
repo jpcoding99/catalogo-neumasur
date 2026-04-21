@@ -87,6 +87,16 @@ body {
     margin: 0;
 }
 
+.product-item-admin .info .status-badge {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    margin-left: 10px;
+}
+
 .product-item-admin .actions {
     display: flex;
     gap: 10px;
@@ -120,4 +130,21 @@ body {
 #product-form textarea {
     min-height: 80px;
     resize: vertical;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-color);
+    padding: 12px;
+    border-radius: 8px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.form-check input {
+    width: auto;
+    margin: 0;
+    transform: scale(1.2);
 }
