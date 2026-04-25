@@ -166,6 +166,13 @@ function formatApernadura(aper) {
     return Array.isArray(aper) ? aper.join(', ') : aper;
 }
 
+// 5.5 Helper para generar mensaje de WhatsApp
+function generarMensajeWsp(llanta) {
+    const aper = formatApernadura(llanta.apernadura);
+    const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
+    return encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
+}
+
 // 6. Renderizar Skeletons y Llantas
 function renderizarSkeletons(cantidad) {
     const skeletonHTML = `
@@ -190,9 +197,7 @@ function renderizarLlantas(lista) {
     }
 
     grid.innerHTML = lista.map(llanta => {
-        const aper = formatApernadura(llanta.apernadura);
-        const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
-        const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
+        const msg = generarMensajeWsp(llanta);
         
         const isSoldOut = llanta.agotado;
         const cardClass = isSoldOut ? 'card sold-out' : 'card';
@@ -209,7 +214,7 @@ function renderizarLlantas(lista) {
                     <p class="color-text">${llanta.color}</p>
                     <p class="specs">
                         <strong>Medida:</strong> ${llanta.medida}<br>
-                        <strong>Aro:</strong> ${aroStr} | <strong>Apernadura:</strong> ${aper}
+                        <strong>Aro:</strong> ${Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro} | <strong>Apernadura:</strong> ${formatApernadura(llanta.apernadura)}
                     </p>
                     <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
                     ${buttonHTML}
@@ -401,10 +406,7 @@ function initModal() {
         if (!llanta) return;
 
         // Reutilizar la lógica de renderizado de la tarjeta
-        const aper = formatApernadura(llanta.apernadura);
-        const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
-        const msg = encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
-        
+        const msg = generarMensajeWsp(llanta);
         const descripcionHTML = llanta.descripcion 
             ? `<p class="modal-description">${llanta.descripcion}</p>` 
             : '';
@@ -419,7 +421,7 @@ function initModal() {
                     <p class="color-text">${llanta.color}</p>
                     <p class="specs">
                         <strong>Medida:</strong> ${llanta.medida}<br>
-                        <strong>Aro:</strong> ${aroStr} | <strong>Apernadura:</strong> ${aper}
+                        <strong>Aro:</strong> ${Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro} | <strong>Apernadura:</strong> ${formatApernadura(llanta.apernadura)}
                     </p>
                     ${descripcionHTML}
                     <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
