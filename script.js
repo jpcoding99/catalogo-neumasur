@@ -118,7 +118,7 @@ async function cargarDatos() {
     try {
         renderizarSkeletons(8); // Mostrar 8 skeletons mientras carga
         // Ahora cargamos el archivo estático generado en el build
-        llantas = await fetch('/data.json').then(r => r.json());
+        llantas = await fetch('data.json').then(r => r.json());
         generarFiltrosDinamicos();
         aplicarFiltrosDesdeURL(); // Aplica filtros de la URL al cargar
     } catch (error) {
