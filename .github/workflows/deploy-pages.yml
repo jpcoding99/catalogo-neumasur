@@ -1,0 +1,45 @@
+# Nombre del workflow
+name: Build and Deploy to GitHub Pages
+
+on:
+  # Se ejecuta en cada push a la rama "main"
+  push:
+    branches: ["main"]
+
+  # Permite ejecutar este workflow manualmente desde la pestaña Actions
+  workflow_dispatch:
+
+# Define los permisos necesarios para el token de GitHub
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Configuración de concurrencia para evitar despliegues simultáneos
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job para construir el sitio
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Sube todo el directorio raíz como artefacto para Pages
+
+  # Job para desplegar el sitio
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
