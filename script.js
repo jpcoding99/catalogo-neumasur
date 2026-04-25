@@ -321,6 +321,18 @@ function aplicarFiltrosDesdeURL() {
     filtrarYRenderizar();
 }
 
+// 9. Lazy Loading, Debounce y Utilidades
+
+// Función Debounce para no sobrecargar el filtro de búsqueda
+function debounce(func, delay = 250) {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
 // 9. Lazy Loading de Imágenes
 function setupLazyLoader() {
     const options = {
@@ -410,6 +422,11 @@ function initModal() {
         const descripcionHTML = llanta.descripcion 
             ? `<p class="modal-description">${llanta.descripcion}</p>` 
             : '';
+        
+        const buttonHTML = llanta.agotado
+            ? '<button class="btn-wsp-item" disabled>Agotado</button>'
+            : `<a href="https://wa.me/56977967174?text=${msg}" target="_blank" class="btn-wsp-item">Consultar Stock</a>`;
+
 
         // Inyectar el HTML de la tarjeta dentro del cuerpo del modal
         modalBody.innerHTML = `
@@ -425,9 +442,7 @@ function initModal() {
                     </p>
                     ${descripcionHTML}
                     <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
-                    <a href="https://wa.me/56977967174?text=${msg}" target="_blank" class="btn-wsp-item">
-                        Consultar Stock
-                    </a>
+                    ${buttonHTML}
                 </div>
             </div>`;
 
@@ -502,7 +517,7 @@ selects.forEach(select => {
 });
 
 // Listener para el input de búsqueda
-searchInput.addEventListener('input', filtrarYRenderizar);
+searchInput.addEventListener('input', debounce(filtrarYRenderizar));
 
 // Iniciar App
 initTheme();

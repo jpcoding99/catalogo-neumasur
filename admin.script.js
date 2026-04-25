@@ -19,7 +19,7 @@ const formTitle = document.getElementById('form-title');
 const formMode = document.getElementById('form-mode');
 const closeModalBtn = document.getElementById('modal-close-admin');
 const addProductBtn = document.getElementById('add-product-btn');
-const saveBtn = document.getElementById('export-json-btn'); // Renombrado en HTML a 'save-changes-btn'
+const saveBtn = document.getElementById('save-changes-btn');
 
 
 // --- AUTENTICACIÓN ---
