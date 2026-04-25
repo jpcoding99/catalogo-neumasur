@@ -172,6 +172,12 @@ body {
     letter-spacing: 0.2px;
 }
 
+/* Mejora de Accesibilidad: Pausar animación si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+    .announcement-text {
+        animation: none;
+    }
+}
 /* 3. Header y Filtros (Sticky) */
 header {
     background-color: var(--card-bg);
