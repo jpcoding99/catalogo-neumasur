@@ -207,10 +207,10 @@ function renderizarLlantas(lista) {
 
         return `
             <div class="${cardClass}" data-codigo="${llanta.codigo}">
-                <img data-src="${llanta.imagen}.jpg" alt="${llanta.codigo}" class="lazy-img" loading="lazy">
+                <img data-src="${llanta.imagen}.jpg" alt="Llanta ${llanta.marca} ${llanta.codigo} color ${llanta.color}" class="lazy-img" loading="lazy">
                 <div class="card-info">
                     <span class="tag">${llanta.codigo}</span>
-                    <h3>${llanta.codigo}</h3>
+                    <h3>${llanta.marca}</h3>
                     <p class="color-text">${llanta.color}</p>
                     <p class="specs">
                         <strong>Medida:</strong> ${llanta.medida}<br>
@@ -431,10 +431,10 @@ function initModal() {
         // Inyectar el HTML de la tarjeta dentro del cuerpo del modal
         modalBody.innerHTML = `
             <div class="card">
-                <img src="${llanta.imagen}.jpg" alt="${llanta.codigo}">
+                <img src="${llanta.imagen}.jpg" alt="Llanta ${llanta.marca} ${llanta.codigo} color ${llanta.color}">
                 <div class="card-info">
                     <span class="tag">${llanta.codigo}</span>
-                    <h3>${llanta.codigo}</h3>
+                    <h3>${llanta.marca}</h3>
                     <p class="color-text">${llanta.color}</p>
                     <p class="specs">
                         <strong>Medida:</strong> ${llanta.medida}<br>
