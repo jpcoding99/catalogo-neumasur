@@ -198,7 +198,6 @@ function renderizarLlantas(lista) {
         const cardClass = isSoldOut ? 'card sold-out' : 'card';
         const buttonHTML = isSoldOut
             ? '<button class="btn-wsp-item" disabled>Agotado</button>'
-            : `<a href="https://wa.me/56995127303?text=${msg}" target="_blank" class="btn-wsp-item">Consultar Stock</a>`;
             : `<a href="https://wa.me/56977967174?text=${msg}" target="_blank" class="btn-wsp-item">Consultar Stock</a>`;
 
         return `
@@ -424,7 +423,6 @@ function initModal() {
                     </p>
                     ${descripcionHTML}
                     <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
-                    <a href="https://wa.me/56995127303?text=${msg}" target="_blank" class="btn-wsp-item">
                     <a href="https://wa.me/56977967174?text=${msg}" target="_blank" class="btn-wsp-item">
                         Consultar Stock
                     </a>
