@@ -1,6 +1,8 @@
 # Catálogo de Llantas Neumasur (Versión Estática)
 
-Este proyecto es un catálogo de productos web estático, diseñado para ser rápido, ligero y fácil de mantener. Se despliega automáticamente en GitHub Pages.
+Este proyecto es la versión estática y simplificada de un catálogo de productos. Fue migrado desde una arquitectura dinámica (que usaba Netlify Functions y MongoDB) para lograr un sitio más rápido, ligero y con un mantenimiento más sencillo.
+
+Ahora, se despliega automáticamente en GitHub Pages.
 
 ## Características Principales
 
@@ -22,7 +24,7 @@ El sitio está configurado para desplegarse automáticamente en GitHub Pages cad
 
 ## Flujo de Trabajo para Actualizar Productos
 
-El proceso para actualizar el catálogo es 100% manual, editando directamente la "base de datos" del sitio, que es el archivo `data.json`.
+El proceso para actualizar el catálogo es ahora 100% manual, eliminando la necesidad de una base de datos. Se edita directamente el archivo `data.json`.
 
 1.  **Editar los Datos:**
     - Abre el archivo `data.json` en tu editor de código.
