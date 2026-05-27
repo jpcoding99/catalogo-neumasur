@@ -4,7 +4,6 @@
       "modelo": "Armory",
       "marca": "Black Rhino",
       "codigo_base": "BR001",
-      "imagen_base": "img/BLACK_RHINO/FBX106/aro-16/106",
       "imagen_base": "img/neumaticos/black-rhino/armory",
       "descripcion": "Un diseño de inspiración militar con un estilo táctico. El Armory está diseñado para soportar las condiciones más duras.",
       "medidas": [
@@ -18,7 +17,6 @@
       "modelo": "Warlord",
       "marca": "Black Rhino",
       "codigo_base": "BR002",
-      "imagen_base": "img/BLACK_RHINO/JT127/aro-16",
       "imagen_base": "img/neumaticos/black-rhino/warlord",
       "descripcion": "El Warlord presenta un diseño de 8 radios con un labio agresivo para una apariencia robusta y potente.",
       "medidas": [
