@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Llantas</title>
+    <title>Catálogo NEUMASUR</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
@@ -50,23 +50,17 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="f-aro">Medida</label>
-                    <select id="f-aro">
-                        <option value="todos">Todos los Aros</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="f-aper">Apernadura</label>
-                    <select id="f-aper">
-                        <option value="todos">Todas</option>
-                    </select>
-                </div>
-                <div class="filter-group">
                     <label for="f-sort">Ordenar Por</label>
                     <select id="f-sort">
                         <option value="default">Relevancia</option>
                         <option value="price-asc">Precio: Menor a Mayor</option>
                         <option value="price-desc">Precio: Mayor a Menor</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="f-aper-group-mobile" style="display: none;">
+                    <label for="f-aper">Apernadura</label>
+                    <select id="f-aper">
+                        <option value="todos">Todas</option>
                     </select>
                 </div>
             </nav>
@@ -77,16 +71,15 @@
         <img src="img/carousel/slide1.JPG" alt="Neumasur - Catálogo de Llantas">
         <div class="hero-overlay">
             <h1>Bienvenido a Neumasur®</h1>
-            <p>Encuentra las mejores llantas para tu vehículo</p>
+            <p>Encuentra la medida indicada para tu vehículo a un buen precio!<p>
+            </p>Explora nuestro catálogo de neumáticos y descubre la calidad y variedad que ofrecemos para cada tipo de vehículo.
+            </p>
         </div>
     </section>
 
     <main class="main-content">
         <!-- Navegación de Filtros Desktop -->
         <nav class="main-nav">
-            <div class="search-container">
-                <input type="search" id="search-input" placeholder="Buscar por código, color...">
-            </div>
             <div class="filter-group">
                 <select id="f-marca-desktop">
                     <option value="todos">Todas las Marcas</option>
@@ -97,7 +90,7 @@
                     <option value="todos">Todos los Aros</option>
                 </select>
             </div>
-            <div class="filter-group">
+            <div class="filter-group" id="f-aper-group-desktop" style="display: none;">
                 <select id="f-aper-desktop">
                     <option value="todos">Todas las Apernaduras</option>
                 </select>
@@ -109,10 +102,19 @@
                     <option value="price-desc">Precio: Mayor a Menor</option>
                 </select>
             </div>
+            <div class="search-container">
+                <input type="search" id="search-input" placeholder="Buscar por modelo, marca...">
+            </div>
         </nav>
         <div class="page-header">
-            <h1>CATÁLOGO DE LLANTAS</h1>
-            <p>Encuentra la llanta perfecta para tu vehículo</p>
+            <h1 id="catalog-title">Catálogo de Neumáticos</h1>
+            <p id="catalog-subtitle">Encuentra el neumático perfecto para tu vehículo</p>
+        </div>
+
+        <!-- Selector de Catálogo -->
+        <div class="catalog-switcher">
+            <button id="show-neumaticos" class="active">Neumáticos</button>
+            <button id="show-llantas">Llantas</button>
         </div>
         
         <div id="catalogo-grid" class="product-grid">

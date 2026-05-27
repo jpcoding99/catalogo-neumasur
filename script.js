@@ -1,9 +1,14 @@
 // 1. Variables Globales y Selección de Elementos
+let neumaticos = [];
 let llantas = [];
+let activeCatalog = 'neumaticos'; // 'neumaticos' o 'llantas'
 let lazyLoadObserver;
+
 const grid = document.getElementById('catalogo-grid');
 const searchInput = document.getElementById('search-input');
 const modal = document.getElementById('product-modal');
+const catalogTitle = document.getElementById('catalog-title');
+const catalogSubtitle = document.getElementById('catalog-subtitle');
 
 // Selects Móvil (Drawer)
 const selectMarca = document.getElementById('f-marca');
@@ -18,6 +23,10 @@ const selectAperDesktop = document.getElementById('f-aper-desktop');
 // Selects de Ordenamiento
 const selectSort = document.getElementById('f-sort');
 const selectSortDesktop = document.getElementById('f-sort-desktop');
+
+// Grupos de filtros para mostrar/ocultar
+const apernaduraGroupMobile = document.getElementById('f-aper-group-mobile');
+const apernaduraGroupDesktop = document.getElementById('f-aper-group-desktop');
 
 const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
@@ -117,10 +126,12 @@ function initTheme() {
 async function cargarDatos() {
     try {
         renderizarSkeletons(8); // Mostrar 8 skeletons mientras carga
-        // Ahora cargamos el archivo estático generado en el build
-        llantas = await fetch('data.json').then(r => r.json());
-        generarFiltrosDinamicos();
-        aplicarFiltrosDesdeURL(); // Aplica filtros de la URL al cargar
+        const data = await fetch('data.json').then(r => r.json());
+        neumaticos = data.neumaticos;
+        llantas = data.llantas;
+        
+        updateFiltersForCatalog(); // Genera filtros para el catálogo por defecto
+        filtrarYRenderizar(); // Renderiza el catálogo inicial
     } catch (error) {
         console.error("Error al cargar datos del catálogo:", error);
         grid.innerHTML = '<p class="loading">Error al cargar el catálogo. Por favor, inténtalo de nuevo más tarde.</p>';
@@ -129,22 +140,20 @@ async function cargarDatos() {
 
 // 4. Generar Filtros Dinámicos
 function generarFiltrosDinamicos() {
-    const marcas = [...new Set(llantas.map(l => l.marca))].sort();
-    const aros = [...new Set(llantas.flatMap(l => l.aro))].sort((a, b) => a - b);
-    const apernaduras = [...new Set(llantas.flatMap(l => l.apernadura))].sort();
+    const marcas = [...new Set(modelos.map(m => m.marca))].sort();
+    // Obtenemos todos los aros de todas las medidas de todos los modelos
+    const aros = [...new Set(modelos.flatMap(m => m.medidas.map(med => med.aro)))].sort((a, b) => a - b);
 
     // Configuración para móvil
     const configsMobile = [
         [selectMarca, marcas, ''],
-        [selectAro, aros, 'Aro '],
-        [selectAper, apernaduras, '']
+        [selectAro, aros, 'Aro ']
     ];
 
     // Configuración para desktop
     const configsDesktop = [
         [selectMarcaDesktop, marcas, ''],
-        [selectAroDesktop, aros, 'Aro '],
-        [selectAperDesktop, apernaduras, '']
+        [selectAroDesktop, aros, 'Aro ']
     ];
 
     // Llenar ambos conjuntos de selects
@@ -158,19 +167,14 @@ function generarFiltrosDinamicos() {
     });
 
     // Sincronizar valores iniciales
-    syncSelects('todos', 'todos', 'todos', 'default');
-}
-
-// 5. Helper para formato de apernadura
-function formatApernadura(aper) {
-    return Array.isArray(aper) ? aper.join(', ') : aper;
+    syncSelects('todos', 'todos', 'default');
 }
 
 // 5.5 Helper para generar mensaje de WhatsApp
-function generarMensajeWsp(llanta) {
-    const aper = formatApernadura(llanta.apernadura);
-    const aroStr = Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro;
-    return encodeURIComponent(`Hola! Me interesa ${llanta.marca} ${llanta.codigo} - ${llanta.color} (Aro ${aroStr}, ${aper})`);
+function generarMensajeWsp(modelo, medida) {
+    if (!modelo || !medida) return '';
+    const texto = `Hola! Me interesa el neumático ${modelo.marca} ${modelo.modelo}, medida ${medida.medida_str}.`;
+    return encodeURIComponent(texto);
 }
 
 // 6. Renderizar Skeletons y Llantas
@@ -190,50 +194,44 @@ function renderizarSkeletons(cantidad) {
     grid.innerHTML = Array(cantidad).fill(skeletonHTML).join('');
 }
 
-function renderizarLlantas(lista) {
+function renderizarNeumaticos(lista) {
     if (lista.length === 0) {
         grid.innerHTML = '<p class="loading">No hay modelos con esos filtros.</p>';
         return;
     }
 
     grid.innerHTML = lista.map(llanta => {
-        const msg = generarMensajeWsp(llanta);
-        
-        const isSoldOut = llanta.agotado;
-        const cardClass = isSoldOut ? 'card sold-out' : 'card';
-        const buttonHTML = isSoldOut
-            ? '<button class="btn-wsp-item" disabled>Agotado</button>'
-            : `<a href="https://wa.me/56977967174?text=${msg}" target="_blank" class="btn-wsp-item">Consultar Stock</a>`;
+        const medidasDisponibles = llanta.medidas.filter(m => !m.agotado).length;
+        const minPrice = Math.min(...llanta.medidas.filter(m => !m.agotado).map(m => m.precio));
+
+        const cardClass = medidasDisponibles > 0 ? 'card' : 'card sold-out';
+        const buttonHTML = `<button class="btn-wsp-item" ${medidasDisponibles === 0 ? 'disabled' : ''}>
+            ${medidasDisponibles > 0 ? 'Ver Detalles' : 'Agotado'}
+        </button>`;
 
         return `
-            <div class="${cardClass}" data-codigo="${llanta.codigo}">
-                <img data-src="${llanta.imagen}.jpg" alt="Llanta ${llanta.marca} ${llanta.codigo} color ${llanta.color}" class="lazy-img" loading="lazy">
+            <div class="${cardClass}" data-codigo-base="${llanta.codigo_base}">
+                <img data-src="${llanta.imagen_base}.jpg" alt="Neumático ${llanta.marca} ${llanta.modelo}" class="lazy-img" loading="lazy">
                 <div class="card-info">
-                    <span class="tag">${llanta.codigo}</span>
-                    <h3>${llanta.marca}</h3>
-                    <p class="color-text">${llanta.color}</p>
-                    <p class="specs">
-                        <strong>Medida:</strong> ${llanta.medida}<br>
-                        <strong>Aro:</strong> ${Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro} | <strong>Apernadura:</strong> ${formatApernadura(llanta.apernadura)}
-                    </p>
-                    <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
+                    <span class="tag">${llanta.marca}</span>
+                    <h3>${llanta.modelo}</h3>
+                    <p class="color-text">${medidasDisponibles} medida(s) disponible(s)</p>
+                    ${minPrice !== Infinity ? `<span class="price">Desde $${minPrice.toLocaleString('es-CL')}</span>` : '<span class="price">No disponible</span>'}
                     ${buttonHTML}
                 </div>
             </div>
         `;
     }).join('');
 
-    // Observar las nuevas imágenes para lazy loading
     const newImages = grid.querySelectorAll('.lazy-img');
     newImages.forEach(img => lazyLoadObserver.observe(img));
 }
 
 // 7. Sincronizar Selects (Móvil y Desktop)
-function syncSelects(marca, aro, aper, sort) {
+function syncSelects(marca, aro, sort) {
     // Sincronizar valores entre móvil y desktop
     selectMarca.value = marca;
     selectAro.value = aro;
-    selectAper.value = aper;
     selectSort.value = sort;
 
     selectMarcaDesktop.value = marca;
@@ -247,33 +245,40 @@ function filtrarYRenderizar() {
     // Lee los valores de los filtros y del buscador
     const m = selectMarca.value; // marca
     const a = selectAro.value; // aro
-    const ap = selectAper.value; // apernadura
     const sort = selectSort.value; // ordenamiento
     const searchTerm = searchInput.value.toLowerCase().trim();
 
-    let filtrados = llantas.filter(l => {
+    let filtrados = modelos.filter(modelo => {
         // Condición de los selects
-        const matchesSelects = (m === 'todos' || l.marca === m) &&
-                               (a === 'todos' || l.aro.includes(parseInt(a))) &&
-                               (ap === 'todos' || l.apernadura.includes(ap));
+        const matchesMarca = (m === 'todos' || modelo.marca === m);
+        // El modelo debe tener al menos una medida que coincida con el aro seleccionado
+        const matchesAro = (a === 'todos' || modelo.medidas.some(med => med.aro === parseInt(a)));
 
         // Condición de la búsqueda
         const matchesSearch = searchTerm === '' ||
-                              l.codigo.toLowerCase().includes(searchTerm) ||
-                              l.color.toLowerCase().includes(searchTerm) ||
-                              (l.descripcion && l.descripcion.toLowerCase().includes(searchTerm));
+                              modelo.modelo.toLowerCase().includes(searchTerm) ||
+                              modelo.marca.toLowerCase().includes(searchTerm) ||
+                              (modelo.descripcion && modelo.descripcion.toLowerCase().includes(searchTerm));
 
-        return matchesSelects && matchesSearch;
+        return matchesMarca && matchesAro && matchesSearch;
     });
 
     // Aplicar ordenamiento
     if (sort === 'price-asc') {
-        filtrados.sort((x, y) => x.precio - y.precio);
+        filtrados.sort((x, y) => {
+            const minPriceX = Math.min(...x.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
+            const minPriceY = Math.min(...y.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
+            return minPriceX - minPriceY;
+        });
     } else if (sort === 'price-desc') {
-        filtrados.sort((x, y) => y.precio - x.precio);
+        filtrados.sort((x, y) => {
+            const minPriceX = Math.min(...x.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
+            const minPriceY = Math.min(...y.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
+            return minPriceY - minPriceX;
+        });
     }
 
-    renderizarLlantas(filtrados);
+    renderizarModelos(filtrados);
     actualizarURL(); // Actualiza la URL con los filtros actuales
 }
 
@@ -282,13 +287,11 @@ function actualizarURL() {
     const params = new URLSearchParams();
     const m = selectMarca.value;
     const a = selectAro.value;
-    const ap = selectAper.value;
     const sort = selectSort.value;
     const searchTerm = searchInput.value.trim();
 
     if (m !== 'todos') params.set('marca', m);
     if (a !== 'todos') params.set('aro', a);
-    if (ap !== 'todos') params.set('apernadura', ap);
     if (sort !== 'default') params.set('sort', sort);
     if (searchTerm !== '') params.set('q', searchTerm);
 
@@ -300,10 +303,10 @@ function actualizarURL() {
 function handleFilterChange(event) {
     const source = event.target.id.includes('-desktop') ? 'desktop' : 'mobile';
     const [m, a, ap, s] = source === 'desktop' 
-        ? [selectMarcaDesktop.value, selectAroDesktop.value, selectAperDesktop.value, selectSortDesktop.value]
-        : [selectMarca.value, selectAro.value, selectAper.value, selectSort.value];
+        ? [selectMarcaDesktop.value, selectAroDesktop.value, null, selectSortDesktop.value]
+        : [selectMarca.value, selectAro.value, null, selectSort.value];
     
-    syncSelects(m, a, ap, s);
+    syncSelects(m, a, s);
     filtrarYRenderizar();
 }
 
@@ -312,12 +315,11 @@ function aplicarFiltrosDesdeURL() {
     const params = new URLSearchParams(window.location.search);
     const marca = params.get('marca') || 'todos';
     const aro = params.get('aro') || 'todos';
-    const apernadura = params.get('apernadura') || 'todos';
     const sort = params.get('sort') || 'default';
     const q = params.get('q') || '';
 
     searchInput.value = q;
-    syncSelects(marca, aro, apernadura, sort);
+    syncSelects(marca, aro, sort);
     filtrarYRenderizar();
 }
 
@@ -357,6 +359,20 @@ function setupLazyLoader() {
         });
     }, options);
 }
+
+// Función Debounce para no sobrecargar el filtro de búsqueda
+function debounce(func, delay = 250) {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+
+
 
 // 10. Drawer Menu Management
 function initDrawerMenu() {
@@ -413,39 +429,68 @@ function initModal() {
     const modalBody = document.getElementById('modal-body');
     const modalCloseBtn = document.getElementById('modal-close');
 
-    function openModal(codigo) {
-        const llanta = llantas.find(l => l.codigo === codigo);
-        if (!llanta) return;
+    function openModal(codigoBase) {
+        const modelo = modelos.find(m => m.codigo_base === codigoBase);
+        if (!modelo) return;
 
-        // Reutilizar la lógica de renderizado de la tarjeta
-        const msg = generarMensajeWsp(llanta);
-        const descripcionHTML = llanta.descripcion 
-            ? `<p class="modal-description">${llanta.descripcion}</p>` 
+        const descripcionHTML = modelo.descripcion 
+            ? `<p class="modal-description">${modelo.descripcion}</p>` 
             : '';
-        
-        const buttonHTML = llanta.agotado
-            ? '<button class="btn-wsp-item" disabled>Agotado</button>'
-            : `<a href="https://wa.me/56977967174?text=${msg}" target="_blank" class="btn-wsp-item">Consultar Stock</a>`;
 
-
-        // Inyectar el HTML de la tarjeta dentro del cuerpo del modal
+        // 1. Inyectar la estructura del modal
         modalBody.innerHTML = `
-            <div class="card">
-                <img src="${llanta.imagen}.jpg" alt="Llanta ${llanta.marca} ${llanta.codigo} color ${llanta.color}">
+            <div class="card modal-card">
+                <img src="${modelo.imagen_base}.jpg" alt="Neumático ${modelo.marca} ${modelo.modelo}">
                 <div class="card-info">
-                    <span class="tag">${llanta.codigo}</span>
-                    <h3>${llanta.marca}</h3>
-                    <p class="color-text">${llanta.color}</p>
-                    <p class="specs">
-                        <strong>Medida:</strong> ${llanta.medida}<br>
-                        <strong>Aro:</strong> ${Array.isArray(llanta.aro) ? llanta.aro.join(', ') : llanta.aro} | <strong>Apernadura:</strong> ${formatApernadura(llanta.apernadura)}
-                    </p>
+                    <span class="tag">${modelo.marca}</span>
+                    <h3>${modelo.modelo}</h3>
                     ${descripcionHTML}
-                    <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
-                    ${buttonHTML}
+                    <div class="modal-dynamic-section">
+                        <div class="filter-group">
+                            <label for="modal-size-select">Selecciona la medida:</label>
+                            <select id="modal-size-select"></select>
+                        </div>
+                        <span id="modal-price-display" class="price"></span>
+                        <a id="modal-wsp-button" target="_blank" class="btn-wsp-item">Consultar Stock</a>
+                    </div>
                 </div>
             </div>`;
 
+        // 2. Poblar y manejar la sección dinámica
+        const sizeSelect = document.getElementById('modal-size-select');
+        const priceDisplay = document.getElementById('modal-price-display');
+        const wspButton = document.getElementById('modal-wsp-button');
+
+        modelo.medidas.forEach(medida => {
+            const option = document.createElement('option');
+            option.value = medida.id;
+            option.textContent = `${medida.medida_str} ${medida.agotado ? '(Agotado)' : ''}`;
+            option.disabled = medida.agotado;
+            sizeSelect.appendChild(option);
+        });
+
+        function actualizarModal(medidaId) {
+            const medidaSeleccionada = modelo.medidas.find(m => m.id === medidaId);
+            if (!medidaSeleccionada) return;
+
+            priceDisplay.textContent = `$${medidaSeleccionada.precio.toLocaleString('es-CL')}`;
+            
+            if (medidaSeleccionada.agotado) {
+                wspButton.classList.add('disabled');
+                wspButton.removeAttribute('href');
+                wspButton.textContent = 'Agotado';
+            } else {
+                const msg = generarMensajeWsp(modelo, medidaSeleccionada);
+                wspButton.classList.remove('disabled');
+                wspButton.href = `https://wa.me/56977967174?text=${msg}`;
+                wspButton.textContent = 'Consultar Stock';
+            }
+        }
+
+        sizeSelect.addEventListener('change', (e) => actualizarModal(e.target.value));
+        
+        // 3. Estado inicial y abrir modal
+        actualizarModal(sizeSelect.value); // Llama con la primera medida seleccionada
         modal.classList.add('open');
         document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
     }
@@ -458,8 +503,9 @@ function initModal() {
     // Evento para abrir el modal (delegación de eventos)
     grid.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
-        if (card && card.dataset.codigo) {
-            openModal(card.dataset.codigo);
+        // Solo abrir si no se hizo clic en un enlace dentro de la tarjeta
+        if (card && card.dataset.codigoBase && e.target.tagName !== 'A') {
+            openModal(card.dataset.codigoBase);
         }
     });
 
@@ -500,7 +546,7 @@ function initLogoAction() {
         searchInput.value = '';
 
         // 2. Resetear los filtros a su estado inicial
-        syncSelects('todos', 'todos', 'todos', 'default');
+        syncSelects('todos', 'todos', 'default');
 
         // 3. Volver a renderizar el catálogo completo
         filtrarYRenderizar();

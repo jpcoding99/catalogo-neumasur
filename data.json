@@ -1,184 +1,56 @@
-[
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX106",
-    "aro": [16],
-    "medida": "16x8.5",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black + Silver Rivets",
-    "precio": 439000,
-    "imagen": "img/BLACK_RHINO/FBX106/aro-16/106",
-    "descripcion": "Ideal para Toyota Hilux, Mitsubishi L200, Ford Ranger (pre-2012)."
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT212",
-    "aro": [16],
-    "medida": "16x8.5",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black + Silver Rivets & Spoke",
-    "precio": 439000,
-    "imagen": "img/BLACK_RHINO/JT212/aro-16"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT127",
-    "aro": [16, 18],
-    "medida": "16x8.5 / 18x9.0",
-    "apernadura": ["6x139.7", "6x135"],
-    "color": "Matte Black",
-    "precio": 439000,
-    "imagen": "img/BLACK_RHINO/JT127/aro-16",
-    "descripcion": "Apernadura dual compatible con Ford F-150 y camionetas 6x139.7."
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT220",
-    "aro": [16, 17],
-    "medida": "16x8.5 / 17x9.0",
-    "apernadura": ["6x139.7", "6x114.3"],
-    "color": "Matte Black",
-    "precio": 439000,
-    "imagen": "img/BLACK_RHINO/JT220/aro-16"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT138",
-    "aro": [16],
-    "medida": "16x8.5",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black",
-    "precio": 439000,
-    "imagen": "img/BLACK_RHINO/JT138/aro-16"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT218",
-    "aro": [16, 17],
-    "medida": "16x8.5 / 17x8.5",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black",
-    "precio": 439000,
-    "imagen": "img/BLACK_RHINO/JT218/aro-16"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT130",
-    "aro": [17],
-    "medida": "17x8.5",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/JT130/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT169",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/JT169/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX155",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black + Millink Spoke",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/FBX155/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX109",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/FBX109/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT258",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black + Silver Rivets",
-    "precio": 499000,
-    "imagen": "img/BLACK_RHINO/JT258/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX146",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x139.7"],
-    "color": "Black Matte",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/FBX146/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX040",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black + Rivets",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/FBX040/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX134",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x114.3"],
-    "color": "Matte Black + Silver Rivets",
-    "precio": 469990,
-    "imagen": "img/BLACK_RHINO/FBX134/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX026",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x114.3"],
-    "color": "Matte Black + Text",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/FBX026/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT194",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x114.3"],
-    "color": "Matte Black",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/JT194/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "JT274",
-    "aro": [17],
-    "medida": "17x9.0",
-    "apernadura": ["6x135"],
-    "color": "Matte Black",
-    "precio": 520000,
-    "imagen": "img/BLACK_RHINO/JT274/aro-17"
-  },
-  {
-    "marca": "Black Rhino",
-    "codigo": "FBX099",
-    "aro": [17],
-    "medida": "17x8.5",
-    "apernadura": ["6x139.7"],
-    "color": "Matte Black + Silver Rivets",
-    "precio": 469000,
-    "imagen": "img/BLACK_RHINO/FBX099/aro-17"
-  }
-]
+{
+  "neumaticos": [
+    {
+      "modelo": "Armory",
+      "marca": "Black Rhino",
+      "codigo_base": "BR001",
+      "imagen_base": "img/BLACK_RHINO/FBX106/aro-16/106",
+      "imagen_base": "img/neumaticos/black-rhino/armory",
+      "descripcion": "Un diseño de inspiración militar con un estilo táctico. El Armory está diseñado para soportar las condiciones más duras.",
+      "medidas": [
+        { "id": "BR001-1", "medida_str": "265/70 R17", "aro": 17, "precio": 469000, "agotado": false },
+        { "id": "BR001-2", "medida_str": "285/70 R17", "aro": 17, "precio": 489000, "agotado": false },
+        { "id": "BR001-3", "medida_str": "275/65 R18", "aro": 18, "precio": 520000, "agotado": true },
+        { "id": "BR001-4", "medida_str": "305/55 R20", "aro": 20, "precio": 599000, "agotado": false }
+      ]
+    },
+    {
+      "modelo": "Warlord",
+      "marca": "Black Rhino",
+      "codigo_base": "BR002",
+      "imagen_base": "img/BLACK_RHINO/JT127/aro-16",
+      "imagen_base": "img/neumaticos/black-rhino/warlord",
+      "descripcion": "El Warlord presenta un diseño de 8 radios con un labio agresivo para una apariencia robusta y potente.",
+      "medidas": [
+        { "id": "BR002-1", "medida_str": "265/75 R16", "aro": 16, "precio": 439000, "agotado": false },
+        { "id": "BR002-2", "medida_str": "285/75 R16", "aro": 16, "precio": 459000, "agotado": true }
+      ]
+    }
+  ],
+  "llantas": [
+    {
+      "marca": "Black Rhino",
+      "codigo": "FBX106",
+      "aro": [16],
+      "medida": "16x8.5",
+      "apernadura": ["6x139.7"],
+      "color": "Matte Black + Silver Rivets",
+      "precio": 439000,
+      "imagen": "img/BLACK_RHINO/FBX106/aro-16/106",
+      "descripcion": "Ideal para Toyota Hilux, Mitsubishi L200, Ford Ranger (pre-2012).",
+      "agotado": false
+    },
+    {
+      "marca": "Black Rhino",
+      "codigo": "JT127",
+      "aro": [16, 18],
+      "medida": "16x8.5 / 18x9.0",
+      "apernadura": ["6x139.7", "6x135"],
+      "color": "Matte Black",
+      "precio": 439000,
+      "imagen": "img/BLACK_RHINO/JT127/aro-16",
+      "descripcion": "Apernadura dual compatible con Ford F-150 y camionetas 6x139.7.",
+      "agotado": true
+    }
+  ]
+}

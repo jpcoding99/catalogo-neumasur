@@ -497,6 +497,35 @@ select:focus {
     letter-spacing: 0.3px;
 }
 
+/* Catalog Switcher */
+.catalog-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 32px;
+}
+.catalog-switcher button {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-dim);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.catalog-switcher button:hover {
+    color: var(--text-main);
+    border-color: var(--accent-color);
+}
+.catalog-switcher button.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(209, 73, 90, 0.3);
+}
+
 .product-grid {
     display: grid;
     grid-template-columns: 1fr;
