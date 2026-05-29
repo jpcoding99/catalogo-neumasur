@@ -1,6 +1,7 @@
 // 1. Variables Globales y Selección de Elementos
 let neumaticos = [];
 let llantas = [];
+let camiones = [];
 let activeCatalog = 'neumaticos'; // 'neumaticos' o 'llantas'
 let lazyLoadObserver;
 
@@ -9,6 +10,9 @@ const searchInput = document.getElementById('search-input');
 const modal = document.getElementById('product-modal');
 const catalogTitle = document.getElementById('catalog-title');
 const catalogSubtitle = document.getElementById('catalog-subtitle');
+const btnShowNeumaticos = document.getElementById('show-neumaticos');
+const btnShowLlantas = document.getElementById('show-llantas');
+const btnShowCamiones = document.getElementById('show-camiones');
 
 // Selects Móvil (Drawer)
 const selectMarca = document.getElementById('f-marca');
@@ -129,55 +133,110 @@ async function cargarDatos() {
         const data = await fetch('data.json').then(r => r.json());
         neumaticos = data.neumaticos;
         llantas = data.llantas;
+        camiones = data.camiones;
         
-        updateFiltersForCatalog(); // Genera filtros para el catálogo por defecto
-        filtrarYRenderizar(); // Renderiza el catálogo inicial
+        // Aplica filtros desde la URL (o los por defecto) una vez que los datos están listos.
+        // Esto asegura que el estado inicial de la app sea correcto.
+        aplicarFiltrosDesdeURL();
     } catch (error) {
         console.error("Error al cargar datos del catálogo:", error);
         grid.innerHTML = '<p class="loading">Error al cargar el catálogo. Por favor, inténtalo de nuevo más tarde.</p>';
     }
 }
 
-// 4. Generar Filtros Dinámicos
-function generarFiltrosDinamicos() {
-    const marcas = [...new Set(modelos.map(m => m.marca))].sort();
-    // Obtenemos todos los aros de todas las medidas de todos los modelos
-    const aros = [...new Set(modelos.flatMap(m => m.medidas.map(med => med.aro)))].sort((a, b) => a - b);
+// 4. Lógica de Catálogo y Filtros
+function getActiveData() {
+    switch (activeCatalog) {
+        case 'neumaticos': return neumaticos;
+        case 'llantas': return llantas;
+        case 'camiones': return camiones;
+    }
+}
 
-    // Configuración para móvil
-    const configsMobile = [
-        [selectMarca, marcas, ''],
-        [selectAro, aros, 'Aro ']
-    ];
+function switchCatalog(newCatalog) {
+    if (activeCatalog === newCatalog) return;
 
-    // Configuración para desktop
-    const configsDesktop = [
-        [selectMarcaDesktop, marcas, ''],
-        [selectAroDesktop, aros, 'Aro ']
-    ];
+    activeCatalog = newCatalog;
 
-    // Llenar ambos conjuntos de selects
-    [...configsMobile, ...configsDesktop].forEach(([select, datos, prefix]) => {
-        datos.forEach(valor => {
+    // 1. Actualizar UI (botones, títulos)
+    btnShowNeumaticos.classList.toggle('active', activeCatalog === 'neumaticos');
+    btnShowLlantas.classList.toggle('active', activeCatalog === 'llantas');
+    btnShowCamiones.classList.toggle('active', activeCatalog === 'camiones');
+
+    if (activeCatalog === 'neumaticos') {
+        catalogTitle.textContent = 'Catálogo de Neumáticos';
+        catalogSubtitle.textContent = 'Encuentra el neumático perfecto para tu vehículo';
+    } else if (activeCatalog === 'llantas') {
+        catalogTitle.textContent = 'Catálogo de Llantas';
+        catalogSubtitle.textContent = 'Dale un nuevo look a tu vehículo con nuestras llantas';
+    } else { // camiones
+        catalogTitle.textContent = 'Catálogo de Camiones';
+        catalogSubtitle.textContent = 'Neumáticos de alta resistencia para tu flota';
+    }
+
+    // 2. Mostrar/ocultar filtros específicos
+    const isLlantas = activeCatalog === 'llantas';
+    apernaduraGroupMobile.style.display = isLlantas ? 'block' : 'none';
+    apernaduraGroupDesktop.style.display = isLlantas ? 'flex' : 'none';
+
+    // 3. Resetear búsqueda y filtros, luego re-renderizar
+    searchInput.value = '';
+    updateFiltersForCatalog(); // Esto resetea y puebla los selects
+    filtrarYRenderizar();
+}
+
+function updateFiltersForCatalog() {
+    const data = getActiveData();
+    let marcas, aros, apernaduras;
+
+    marcas = [...new Set(data.map(item => item.marca))].sort();
+
+    if (activeCatalog === 'neumaticos') {
+        // Requerimiento: mostrar siempre de aro 12 a 20 para neumáticos
+        aros = Array.from({ length: 9 }, (_, i) => 12 + i); // Crea [12, 13, ..., 20]
+        apernaduras = []; // No aplica
+    } else if (activeCatalog === 'llantas') {
+        aros = [...new Set(data.flatMap(item => item.aro))].sort((a, b) => a - b);
+        apernaduras = [...new Set(data.flatMap(item => item.apernadura))].sort();
+    } else { // camiones
+        aros = [...new Set(data.flatMap(item => item.medidas.map(med => med.aro)))].sort((a, b) => a - b);
+        apernaduras = []; // No aplica
+    }
+
+    const populateSelect = (select, options, prefix = '') => {
+        // Limpiar opciones existentes (excepto la primera "Todos")
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        // Llenar con nuevas opciones
+        options.forEach(valor => {
             const opt = document.createElement('option');
             opt.value = valor;
             opt.textContent = prefix + valor;
             select.appendChild(opt);
         });
-    });
+    };
 
-    // Sincronizar valores iniciales
-    syncSelects('todos', 'todos', 'default');
+    // Poblar todos los selects
+    populateSelect(selectMarca, marcas);
+    populateSelect(selectMarcaDesktop, marcas);
+    populateSelect(selectAro, aros, 'Aro ');
+    populateSelect(selectAroDesktop, aros, 'Aro ');
+    populateSelect(selectAper, apernaduras);
+    populateSelect(selectAperDesktop, apernaduras);
+    
+    // Resetear selects a "todos" al cambiar de catálogo
+    syncSelects('todos', 'todos', 'todos', 'default');
 }
 
-// 5.5 Helper para generar mensaje de WhatsApp
+// 5. Helpers
 function generarMensajeWsp(modelo, medida) {
     if (!modelo || !medida) return '';
     const texto = `Hola! Me interesa el neumático ${modelo.marca} ${modelo.modelo}, medida ${medida.medida_str}.`;
     return encodeURIComponent(texto);
 }
 
-// 6. Renderizar Skeletons y Llantas
+// 6. Renderizado
 function renderizarSkeletons(cantidad) {
     const skeletonHTML = `
         <div class="skeleton-card">
@@ -200,9 +259,9 @@ function renderizarNeumaticos(lista) {
         return;
     }
 
-    grid.innerHTML = lista.map(llanta => {
-        const medidasDisponibles = llanta.medidas.filter(m => !m.agotado).length;
-        const minPrice = Math.min(...llanta.medidas.filter(m => !m.agotado).map(m => m.precio));
+    grid.innerHTML = lista.map(neumatico => {
+        const medidasDisponibles = neumatico.medidas.filter(m => !m.agotado).length;
+        const minPrice = Math.min(...neumatico.medidas.filter(m => !m.agotado).map(m => m.precio));
 
         const cardClass = medidasDisponibles > 0 ? 'card' : 'card sold-out';
         const buttonHTML = `<button class="btn-wsp-item" ${medidasDisponibles === 0 ? 'disabled' : ''}>
@@ -210,11 +269,11 @@ function renderizarNeumaticos(lista) {
         </button>`;
 
         return `
-            <div class="${cardClass}" data-codigo-base="${llanta.codigo_base}">
-                <img data-src="${llanta.imagen_base}.jpg" alt="Neumático ${llanta.marca} ${llanta.modelo}" class="lazy-img" loading="lazy">
+            <div class="${cardClass}" data-codigo-base="${neumatico.codigo_base}">
+                <img data-src="${neumatico.imagen_base}.jpg" alt="Neumático ${neumatico.marca} ${neumatico.modelo}" class="lazy-img" loading="lazy">
                 <div class="card-info">
-                    <span class="tag">${llanta.marca}</span>
-                    <h3>${llanta.modelo}</h3>
+                    <span class="tag">${neumatico.marca}</span>
+                    <h3>${neumatico.modelo}</h3>
                     <p class="color-text">${medidasDisponibles} medida(s) disponible(s)</p>
                     ${minPrice !== Infinity ? `<span class="price">Desde $${minPrice.toLocaleString('es-CL')}</span>` : '<span class="price">No disponible</span>'}
                     ${buttonHTML}
@@ -227,11 +286,43 @@ function renderizarNeumaticos(lista) {
     newImages.forEach(img => lazyLoadObserver.observe(img));
 }
 
+function renderizarLlantas(lista) {
+    if (lista.length === 0) {
+        grid.innerHTML = '<p class="loading">No hay llantas con esos filtros.</p>';
+        return;
+    }
+
+    grid.innerHTML = lista.map(llanta => {
+        const cardClass = llanta.agotado ? 'card sold-out' : 'card';
+        // Las llantas no usan el modal de detalle, el botón es un enlace directo a WhatsApp.
+        const buttonHTML = `<a href="https://wa.me/56977967174?text=${encodeURIComponent(`Hola! Me interesa la llanta ${llanta.marca} ${llanta.codigo}, medida ${llanta.medida}.`)}" target="_blank" class="btn-wsp-item ${llanta.agotado ? 'disabled' : ''}">
+            ${llanta.agotado ? 'Agotado' : 'Consultar Stock'}
+        </a>`;
+
+        return `
+            <div class="${cardClass}" data-codigo="${llanta.codigo}">
+                <img data-src="${llanta.imagen}.jpg" alt="Llanta ${llanta.marca} ${llanta.codigo}" class="lazy-img" loading="lazy">
+                <div class="card-info">
+                    <span class="tag">${llanta.marca}</span>
+                    <h3>${llanta.color}</h3>
+                    <p class="color-text">${llanta.medida} | ${Array.isArray(llanta.apernadura) ? llanta.apernadura.join(' / ') : llanta.apernadura}</p>
+                    <span class="price">$${llanta.precio.toLocaleString('es-CL')}</span>
+                    ${buttonHTML}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    const newImages = grid.querySelectorAll('.lazy-img');
+    newImages.forEach(img => lazyLoadObserver.observe(img));
+}
+
 // 7. Sincronizar Selects (Móvil y Desktop)
-function syncSelects(marca, aro, sort) {
+function syncSelects(marca, aro, aper, sort) {
     // Sincronizar valores entre móvil y desktop
     selectMarca.value = marca;
     selectAro.value = aro;
+    selectAper.value = aper;
     selectSort.value = sort;
 
     selectMarcaDesktop.value = marca;
@@ -242,43 +333,62 @@ function syncSelects(marca, aro, sort) {
 
 // 8. Filtrar Stock
 function filtrarYRenderizar() {
-    // Lee los valores de los filtros y del buscador
-    const m = selectMarca.value; // marca
-    const a = selectAro.value; // aro
-    const sort = selectSort.value; // ordenamiento
+    // 1. Lee los valores de los filtros y del buscador
+    const m = selectMarca.value;
+    const a = selectAro.value;
+    const ap = selectAper.value;
+    const sort = selectSort.value;
     const searchTerm = searchInput.value.toLowerCase().trim();
 
-    let filtrados = modelos.filter(modelo => {
-        // Condición de los selects
-        const matchesMarca = (m === 'todos' || modelo.marca === m);
-        // El modelo debe tener al menos una medida que coincida con el aro seleccionado
-        const matchesAro = (a === 'todos' || modelo.medidas.some(med => med.aro === parseInt(a)));
+    const data = getActiveData();
+    let filtrados = [];
 
-        // Condición de la búsqueda
-        const matchesSearch = searchTerm === '' ||
-                              modelo.modelo.toLowerCase().includes(searchTerm) ||
-                              modelo.marca.toLowerCase().includes(searchTerm) ||
-                              (modelo.descripcion && modelo.descripcion.toLowerCase().includes(searchTerm));
-
-        return matchesMarca && matchesAro && matchesSearch;
-    });
-
-    // Aplicar ordenamiento
-    if (sort === 'price-asc') {
-        filtrados.sort((x, y) => {
-            const minPriceX = Math.min(...x.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
-            const minPriceY = Math.min(...y.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
-            return minPriceX - minPriceY;
+    // 2. Filtrar según el catálogo activo
+    if (activeCatalog === 'neumaticos' || activeCatalog === 'camiones') {
+        filtrados = data.filter(item => {
+            const matchesMarca = (m === 'todos' || item.marca === m);
+            const matchesAro = (a === 'todos' || item.medidas.some(med => med.aro === parseFloat(a)));
+            const matchesSearch = searchTerm === '' ||
+                                  item.modelo.toLowerCase().includes(searchTerm) ||
+                                  item.marca.toLowerCase().includes(searchTerm) ||
+                                  (item.descripcion && item.descripcion.toLowerCase().includes(searchTerm));
+            return matchesMarca && matchesAro && matchesSearch;
         });
-    } else if (sort === 'price-desc') {
-        filtrados.sort((x, y) => {
-            const minPriceX = Math.min(...x.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
-            const minPriceY = Math.min(...y.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
-            return minPriceY - minPriceX;
+    } else { // llantas (activeCatalog === 'llantas')
+        filtrados = data.filter(item => {
+            const matchesMarca = (m === 'todos' || item.marca === m);
+            const matchesAro = (a === 'todos' || (Array.isArray(item.aro) && item.aro.includes(parseFloat(a))));
+            const matchesAper = (ap === 'todos' || (Array.isArray(item.apernadura) && item.apernadura.includes(ap)));
+            const matchesSearch = searchTerm === '' ||
+                                  item.codigo.toLowerCase().includes(searchTerm) ||
+                                  item.marca.toLowerCase().includes(searchTerm) ||
+                                  item.color.toLowerCase().includes(searchTerm) ||
+                                  (item.descripcion && item.descripcion.toLowerCase().includes(searchTerm));
+            return matchesMarca && matchesAro && matchesAper && matchesSearch;
         });
     }
 
-    renderizarModelos(filtrados);
+    // 3. Aplicar ordenamiento
+    const getMinPrice = (item) => {
+        if (activeCatalog === 'neumaticos' || activeCatalog === 'camiones') {
+            return Math.min(...item.medidas.filter(med => !med.agotado).map(med => med.precio), Infinity);
+        }
+        return item.agotado ? Infinity : item.precio;
+    };
+
+    if (sort === 'price-asc') {
+        filtrados.sort((x, y) => getMinPrice(x) - getMinPrice(y));
+    } else if (sort === 'price-desc') {
+        filtrados.sort((x, y) => getMinPrice(y) - getMinPrice(x));
+    }
+
+    // 4. Renderizar
+    if (activeCatalog === 'neumaticos' || activeCatalog === 'camiones') {
+        renderizarNeumaticos(filtrados);
+    } else {
+        renderizarLlantas(filtrados);
+    }
+    
     actualizarURL(); // Actualiza la URL con los filtros actuales
 }
 
@@ -287,11 +397,14 @@ function actualizarURL() {
     const params = new URLSearchParams();
     const m = selectMarca.value;
     const a = selectAro.value;
+    const ap = selectAper.value;
     const sort = selectSort.value;
     const searchTerm = searchInput.value.trim();
 
+    if (activeCatalog !== 'neumaticos') params.set('catalog', activeCatalog);
     if (m !== 'todos') params.set('marca', m);
     if (a !== 'todos') params.set('aro', a);
+    if (ap !== 'todos' && activeCatalog === 'llantas') params.set('apernadura', ap);
     if (sort !== 'default') params.set('sort', sort);
     if (searchTerm !== '') params.set('q', searchTerm);
 
@@ -302,39 +415,58 @@ function actualizarURL() {
 // Función que se activa con el evento 'change' para sincronizar y luego filtrar
 function handleFilterChange(event) {
     const source = event.target.id.includes('-desktop') ? 'desktop' : 'mobile';
-    const [m, a, ap, s] = source === 'desktop' 
-        ? [selectMarcaDesktop.value, selectAroDesktop.value, null, selectSortDesktop.value]
-        : [selectMarca.value, selectAro.value, null, selectSort.value];
+    const [m, a, ap, s] = source === 'desktop'
+        ? [selectMarcaDesktop.value, selectAroDesktop.value, selectAperDesktop.value, selectSortDesktop.value]
+        : [selectMarca.value, selectAro.value, selectAper.value, selectSort.value];
     
-    syncSelects(m, a, s);
+    syncSelects(m, a, ap, s);
     filtrarYRenderizar();
 }
 
 // Lee los parámetros de la URL al cargar la página y aplica los filtros
 function aplicarFiltrosDesdeURL() {
     const params = new URLSearchParams(window.location.search);
+    const catalog = params.get('catalog') || 'neumaticos';
     const marca = params.get('marca') || 'todos';
     const aro = params.get('aro') || 'todos';
+    const aper = params.get('apernadura') || 'todos';
     const sort = params.get('sort') || 'default';
     const q = params.get('q') || '';
 
+    // 1. Establecer el catálogo activo sin disparar renderizado
+    activeCatalog = catalog;
+
+    // 2. Actualizar la UI que depende del catálogo (botones, títulos, visibilidad de filtros)
+    btnShowNeumaticos.classList.toggle('active', activeCatalog === 'neumaticos');
+    btnShowLlantas.classList.toggle('active', activeCatalog === 'llantas');
+    btnShowCamiones.classList.toggle('active', activeCatalog === 'camiones');
+
+    if (activeCatalog === 'neumaticos') {
+        catalogTitle.textContent = 'Catálogo de Neumáticos';
+        catalogSubtitle.textContent = 'Encuentra el neumático perfecto para tu vehículo';
+    } else if (activeCatalog === 'llantas') {
+        catalogTitle.textContent = 'Catálogo de Llantas';
+        catalogSubtitle.textContent = 'Dale un nuevo look a tu vehículo con nuestras llantas';
+    } else { // camiones
+        catalogTitle.textContent = 'Catálogo de Camiones';
+        catalogSubtitle.textContent = 'Neumáticos de alta resistencia para tu flota';
+    }
+    const isLlantas = activeCatalog === 'llantas';
+    apernaduraGroupMobile.style.display = isLlantas ? 'block' : 'none';
+    apernaduraGroupDesktop.style.display = isLlantas ? 'flex' : 'none';
+
+    // 3. Poblar los filtros <select> con las opciones correctas para el catálogo
+    updateFiltersForCatalog();
+
+    // 4. Establecer los valores de los filtros y la búsqueda según la URL
     searchInput.value = q;
-    syncSelects(marca, aro, sort);
+    syncSelects(marca, aro, aper, sort);
+
+    // 5. Finalmente, renderizar el catálogo con el estado inicial completo
     filtrarYRenderizar();
 }
 
 // 9. Lazy Loading, Debounce y Utilidades
-
-// Función Debounce para no sobrecargar el filtro de búsqueda
-function debounce(func, delay = 250) {
-    let timeoutId;
-    return (...args) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
 // 9. Lazy Loading de Imágenes
 function setupLazyLoader() {
     const options = {
@@ -370,9 +502,6 @@ function debounce(func, delay = 250) {
         }, delay);
     };
 }
-
-
-
 
 // 10. Drawer Menu Management
 function initDrawerMenu() {
@@ -430,7 +559,9 @@ function initModal() {
     const modalCloseBtn = document.getElementById('modal-close');
 
     function openModal(codigoBase) {
-        const modelo = modelos.find(m => m.codigo_base === codigoBase);
+        // El modal solo está diseñado para la estructura de datos de 'neumaticos'.
+        const data = (activeCatalog === 'camiones') ? camiones : neumaticos;
+        const modelo = data.find(m => m.codigo_base === codigoBase);
         if (!modelo) return;
 
         const descripcionHTML = modelo.descripcion 
@@ -503,8 +634,8 @@ function initModal() {
     // Evento para abrir el modal (delegación de eventos)
     grid.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
-        // Solo abrir si no se hizo clic en un enlace dentro de la tarjeta
-        if (card && card.dataset.codigoBase && e.target.tagName !== 'A') {
+        // Solo abrir para neumáticos (que tienen 'data-codigo-base') y si no se hizo clic en un enlace.
+        if (card && card.dataset.codigoBase && !e.target.closest('a')) {
             openModal(card.dataset.codigoBase);
         }
     });
@@ -542,11 +673,16 @@ function initLogoAction() {
     logoLink.addEventListener('click', (e) => {
         e.preventDefault();
 
+        // 0. Volver al catálogo por defecto si no está activo
+        if (activeCatalog !== 'neumaticos') {
+            switchCatalog('neumaticos');
+        }
+
         // 1. Resetear la barra de búsqueda
         searchInput.value = '';
 
         // 2. Resetear los filtros a su estado inicial
-        syncSelects('todos', 'todos', 'default');
+        syncSelects('todos', 'todos', 'todos', 'default');
 
         // 3. Volver a renderizar el catálogo completo
         filtrarYRenderizar();
@@ -565,6 +701,11 @@ selects.forEach(select => {
 // Listener para el input de búsqueda
 searchInput.addEventListener('input', debounce(filtrarYRenderizar));
 
+// Listeners para los botones de cambio de catálogo
+btnShowNeumaticos.addEventListener('click', () => switchCatalog('neumaticos'));
+btnShowLlantas.addEventListener('click', () => switchCatalog('llantas'));
+btnShowCamiones.addEventListener('click', () => switchCatalog('camiones'));
+
 // Iniciar App
 initTheme();
 setupLazyLoader();
@@ -572,4 +713,4 @@ initDrawerMenu();
 initBackToTopButton();
 initModal();
 initLogoAction();
-cargarDatos();
+cargarDatos(); // Esta función ahora se encarga de iniciar el renderizado inicial

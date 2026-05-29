@@ -50,5 +50,18 @@
       "descripcion": "Apernadura dual compatible con Ford F-150 y camionetas 6x139.7.",
       "agotado": true
     }
+  ],
+  "camiones": [
+    {
+      "modelo": "CargoMaster Pro",
+      "marca": "HeavyDuty",
+      "codigo_base": "HD001",
+      "imagen_base": "img/camiones/cargomaster",
+      "descripcion": "Neumático radial de alta durabilidad para camiones de carga pesada. Diseñado para un rendimiento óptimo en largas distancias.",
+      "medidas": [
+        { "id": "HD001-1", "medida_str": "215/75 R17.5", "aro": 17.5, "precio": 185000, "agotado": false },
+        { "id": "HD001-2", "medida_str": "295/80 R22.5", "aro": 22.5, "precio": 320000, "agotado": false }
+      ]
+    }
   ]
 }
